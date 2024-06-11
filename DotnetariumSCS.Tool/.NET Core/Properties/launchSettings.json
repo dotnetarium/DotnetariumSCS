@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "security-scan": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\dmitry\\fido2me\\Fido2me.sln"
+    }
+  }
+}

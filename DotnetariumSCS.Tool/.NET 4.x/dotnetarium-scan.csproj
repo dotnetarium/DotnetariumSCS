@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>1701;1702;8632</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\ErrorLogger.cs" Link="ErrorLogger.cs" />
+    <Compile Include="..\Hash.cs" Link="Hash.cs" />
+    <Compile Include="..\JsonWriter.cs" Link="JsonWriter.cs" />
+    <Compile Include="..\Program.cs" Link="Program.cs" />
+    <Compile Include="..\SarifDiagnosticComparer.cs" Link="SarifDiagnosticComparer.cs" />
+    <Compile Include="..\SarifErrorLogger.cs" Link="SarifErrorLogger.cs" />
+    <Compile Include="..\SarifV2ErrorLogger.cs" Link="SarifV2ErrorLogger.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNet.Glob" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.9.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.9.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.9.2" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="8.0.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.2" />
+    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <PackageReference Include="MSBuild.AssemblyVersion" Version="1.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DotnetariumSCS\DotnetariumSCS.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,2639 @@
+﻿# IMPORTANT: YML is very strict about indentation and white spaces
+
+# Set to 'true' to get fake SCS0000 warning when analysis is completed. Useful for grepping logs for a proof that analyzer did run.
+ReportAnalysisCompletion: false
+
+# Set to 'true' to see more warnings
+AuditMode: false
+
+MaxInterproceduralMethodCallChain: 3
+
+MaxInterproceduralLambdaOrLocalFunctionCallChain: 3
+
+# Generate a list of additional locations for the taint analyzer (experimental feature: disabled by default)
+TaintFlowVisualizationEnabled: false
+
+# Case insensitive pattern of web config files to analyze when AdditionalFileItemNames are configured (see https://security-code-scan.github.io/#Analyzing.aspxandweb.configFiles)
+WebConfigFiles: ^web\.config.*
+
+# Password validator analysis preferences:
+PasswordValidatorRequiredLength: 8
+MinimumPasswordValidatorProperties: 3
+## Possible values: RequiredLength, RequireUppercase, RequireDigit, RequireLowercase, RequireNonLetterOrDigit
+PasswordValidatorRequiredProperties: [RequiredLength]
+
+TaintEntryPoints:
+
+  System.Object:
+    Dependency:
+      - Microsoft.AspNetCore.Mvc.ControllerBase
+      - Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+      - Microsoft.AspNetCore.Mvc.ControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonActionAttribute
+      - Microsoft.AspNetCore.Mvc.FromServicesAttribute
+    Class:
+      Accessibility:
+        - public
+      Suffix:
+        Text: Controller
+        IncludeParent: true
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.ControllerAttribute
+          - Type: Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonControllerAttribute
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonActionAttribute
+    Parameter:
+      Attributes:
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.FromServicesAttribute
+
+  Microsoft.AspNetCore.Mvc.RazorPages.PageModel:
+    Class:
+      Accessibility:
+        - public
+      Parent: Microsoft.AspNetCore.Mvc.RazorPages.PageModel
+    Method:
+      Name: /^On(?:Get|Post)[^\(]*$/
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.RazorPages.NonHandlerAttribute
+
+  System.Web.Mvc.ControllerBase:
+    Class:
+      Accessibility:
+        - public
+      Parent: System.Web.Mvc.ControllerBase
+      Suffix:
+        Text: Controller
+        IncludeParent: false
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Exclude:
+          - Type: System.Web.Mvc.NonActionAttribute
+
+  System.Web.Http.ApiController:
+    Class:
+      Accessibility:
+        - public
+      Parent: System.Web.Http.ApiController
+      Suffix:
+        Text: Controller
+        IncludeParent: false
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Exclude:
+          - Type: System.Web.Http.NonActionAttribute
+
+TaintSources:
+
+  - Type: Microsoft.EntityFrameworkCore.DbContext
+
+  - Type: Microsoft.AspNetCore.Routing.RouteValueDictionary
+
+  - Type: System.Web.Routing.RouteValueDictionary
+
+  - Type: System.Console
+    Methods:
+      - ReadLine
+
+  - Type: System.Net.Sockets.TcpClient
+    Methods:
+      - GetStream
+
+  - Type: System.Net.Sockets.UdpClient
+    Methods:
+      - EndReceive
+      - Receive
+      - ReceiveAsync
+
+  - Type: System.Web.HttpPostedFile
+    Properties:
+      - ContentType
+      - FileName
+      - InputStream
+
+  - Type: System.Web.HttpPostedFileBase
+    Properties:
+      - ContentType
+      - FileName
+      - InputStream
+
+  - Type: System.Web.HttpPostedFileWrapper
+    Properties:
+      - ContentType
+      - FileName
+      - InputStream
+
+  - Type: System.Web.Routing.RequestContext
+    Properties:
+      - HttpContext
+
+  - Type: Microsoft.AspNetCore.Http.IHeaderDictionary
+    IsInterface: true
+    Properties:
+      - Items
+
+  - Type: Microsoft.AspNetCore.Http.HostString
+    Properties:
+      - Host
+      - Value
+
+  - Type: Microsoft.AspNetCore.Http.HttpContext
+    Properties:
+      - Items
+      - Request
+      - Response
+      - User
+
+  - Type: Microsoft.AspNetCore.Http.DefaultHttpContext
+    Properties:
+      - HttpContext
+      - Items
+      - Request
+      - Response
+      - TraceIdentifier
+      - User
+
+  - Type: Microsoft.AspNetCore.Http.IRequestCookieCollection
+    IsInterface: true
+    Properties:
+      - Item
+      # TryGetValue?
+
+  - Type: Microsoft.AspNetCore.Http.IFormCollection
+    IsInterface: true
+    Properties:
+      - Files
+      - Item
+      # TryGetValue?
+
+  - Type: Microsoft.AspNetCore.Http.HttpRequest
+    Properties:
+      - Body
+      - BodyReader
+      - ContentType
+      - Cookies
+      - Form
+      - Headers
+      - Host
+      - HttpContext
+      - Method
+      - Path
+      - PathBase
+      - Protocol
+      - Query
+      - QueryString
+      - RouteValues
+      - Scheme
+    Methods:
+      - ReadFormAsync
+
+  - Type: System.Web.HttpRequest
+    Properties:
+      - AcceptTypes
+      - AnonymousID
+      - Browser
+      - ClientCertificate
+      - ContentType
+      - Cookies
+      - Files
+      - Form
+      - Headers
+      - HttpMethod
+      - InputStream
+      - Item
+      - Params
+      - Path
+      - PathInfo
+      - QueryString
+      - RawUrl
+      - RequestContext
+      - RequestType
+      # Some server variables get their information from HTTP headers.
+      # It is recommended that you distrust information in HTTP headers because this data can be falsified by malicious users.
+      - ServerVariables
+      - Unvalidated
+      - Url
+      - UrlReferrer
+      - UserAgent
+      - UserHostAddress
+      - UserHostName
+      - UserLanguages
+    Methods:
+      - BinaryRead
+      - GetBufferedInputStream
+      - GetBufferlessInputStream
+
+  - Type: System.Web.HttpRequestBase
+    Properties:
+      - AcceptTypes
+      - AnonymousID
+      - Browser
+      - ClientCertificate
+      - ContentType
+      - Cookies
+      - Files
+      - Form
+      - Headers
+      - HttpMethod
+      - InputStream
+      - Item
+      - Params
+      - Path
+      - PathInfo
+      - QueryString
+      - RawUrl
+      - RequestContext
+      - RequestType
+      # Some server variables get their information from HTTP headers.
+      # It is recommended that you distrust information in HTTP headers because this data can be falsified by malicious users.
+      - ServerVariables
+      - Unvalidated
+      - Url
+      - UrlReferrer
+      - UserAgent
+      - UserHostAddress
+      - UserHostName
+      - UserLanguages
+    Methods:
+      - BinaryRead
+      - GetBufferedInputStream
+      - GetBufferlessInputStream
+
+  - Type: System.Web.HttpRequestWrapper
+    Properties:
+      - AcceptTypes
+      - AnonymousID
+      - Browser
+      - ClientCertificate
+      - ContentType
+      - Cookies
+      - Files
+      - Form
+      - Headers
+      - HttpMethod
+      - InputStream
+      - Item
+      - Params
+      - Path
+      - PathInfo
+      - QueryString
+      - RawUrl
+      - RequestContext
+      - RequestType
+      # Some server variables get their information from HTTP headers.
+      # It is recommended that you distrust information in HTTP headers because this data can be falsified by malicious users.
+      - ServerVariables
+      - Unvalidated
+      - Url
+      - UrlReferrer
+      - UserAgent
+      - UserHostAddress
+      - UserHostName
+      - UserLanguages
+    Methods:
+      - BinaryRead
+      - GetBufferedInputStream
+      - GetBufferlessInputStream
+
+  - Type: System.Web.UI.WebControls.FileUpload
+    Properties:
+      - FileName
+      - FileContent
+
+  - Type: System.Web.UI.WebControls.HiddenField
+    Properties:
+      - Value
+
+  - Type: System.Web.UI.WebControls.TextBox
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.HtmlControls.HtmlInputFile
+    Properties:
+      - Value
+
+  - Type: System.Web.UI.HtmlControls.HtmlInputControl
+    Properties:
+      - Value
+
+  - Type: System.Web.UI.HtmlControls.HtmlInputText
+    Properties:
+      - Value
+
+  - Type: System.Web.UI.HtmlControls.HtmlTextArea
+    Properties:
+      - Value
+
+  - Type: System.IO.Compression.ZipArchiveEntry
+    Properties:
+      - FullName
+      - Name
+
+  - Type: System.Net.DownloadDataCompletedEventArgs
+    Properties:
+      - Result
+
+  - Type: System.Net.OpenReadCompletedEventArgs
+    Properties:
+      - Result
+
+  - Type: System.Net.WebClient
+    Methods:
+      - DownloadData
+      - DownloadDataTaskAsync
+      - DownloadString
+      - DownloadStringTaskAsync
+      - OpenRead
+      - OpenReadTaskAsync
+
+Sanitizers:
+
+  - Type: Microsoft.Security.Application.Encoder
+    TaintTypes:
+      - SCS0026
+    Methods:
+      - Name: LdapDistinguishedNameEncode
+
+  - Type: Microsoft.Security.Application.Encoder
+    TaintTypes:
+      - SCS0031
+    Methods:
+      - Name: LdapEncode
+      - Name: LdapFilterEncode
+
+  - Type: System.Uri
+    TaintTypes:
+      - SCS0027
+    Methods:
+      - Name: TryCreate
+        Condition: [{1: 2}] # UriKind.Relative
+        InOut: [{"uriString": "result"}]
+
+  - Type: System.Web.Mvc.UrlHelper
+    TaintTypes:
+      - SCS0027
+    Methods:
+      - Name: Action
+      - Name: HttpRouteUrl
+      - Name: RouteUrl
+      - Name: IsLocalUrl
+        InOut: [{"url": "url"}]
+
+  - Type: Microsoft.AspNetCore.Mvc.IUrlHelper
+    TaintTypes:
+      - SCS0027
+    Methods:
+      - Name: RouteUrl
+      - Name: IsLocalUrl
+        InOut: [{"url": "url"}]
+
+  - Type: Microsoft.AspNetCore.Mvc.UrlHelperExtensions
+    TaintTypes:
+      - SCS0027
+    Methods:
+      - Name: RouteUrl
+
+  - Type: Newtonsoft.Json.JsonConvert
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: SerializeObject
+
+  - Type: Microsoft.Security.Application.Encoder
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlAttributeEncode
+      - Name: HtmlEncode
+      - Name: HtmlFormUrlEncode
+      - Name: UrlEncode
+      - Name: UrlPathEncode
+      - Name: XmlAttributeEncode
+      - Name: XmlEncode
+
+  - Type: Microsoft.Security.Application.AntiXss
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlAttributeEncode
+      - Name: HtmlEncode
+      - Name: HtmlFormUrlEncode
+      - Name: UrlEncode
+      - Name: UrlPathEncode
+      - Name: XmlAttributeEncode
+      - Name: XmlEncode
+
+  - Type: Microsoft.Security.Application.AntiXssEncoder
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlAttributeEncode
+      - Name: HtmlEncode
+
+  - Type: System.Web.Security.AntiXss.AntiXssEncoder
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlEncode
+      - Name: HtmlFormUrlEncode
+      - Name: UrlEncode
+      - Name: XmlAttributeEncode
+      - Name: XmlEncode
+
+  - Type: System.Web.HttpServerUtilityBase
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: HtmlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+      - Name: UrlEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: UrlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+
+  - Type: System.Web.HttpServerUtilityWrapper
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: HtmlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+      - Name: UrlEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: UrlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+
+  - Type: System.Web.HttpServerUtility
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: HtmlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+      - Name: UrlEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: UrlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+
+  - Type: System.Web.HttpUtility
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: HtmlEncode
+        ArgumentCount: 1
+        InOut: [{"value": ".Return"}, {"s": ".Return"}]
+      - Name: HtmlEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+      - Name: HtmlAttributeEncode
+        ArgumentCount: 1
+        InOut: [{"s": ".Return"}]
+      - Name: HtmlAttributeEncode
+        ArgumentCount: 2
+        InOut: [{"s": "output"}]
+
+  - Type: System.Text.Encodings.Web.TextEncoder
+    TaintTypes:
+      - SCS0029
+    Methods:
+      - Name: Encode
+        ArgumentCount: 1
+        InOut: [{"value": ".Return"}]
+      - Name: Encode
+        ArgumentCount: 2
+        InOut: [{"value": "output"}]
+      - Name: Encode
+        ArgumentCount: 4
+        InOut: [{"value": "output"}]
+
+  - Type: Microsoft.Extensions.FileProviders.PhysicalFileProvider
+    TaintTypes:
+      - SCS0018
+    Methods:
+      - Name: GetFileInfo # doesn't immediately sanitizes it, but assume all properties including PhysicalPath as safe
+
+  - Type: System.Web.HttpServerUtility
+    TaintTypes:
+      - SCS0018
+    Methods:
+      - Name: MapPath
+
+  - Type: System.Web.HttpServerUtilityBase
+    TaintTypes:
+      - SCS0018
+    Methods:
+      - Name: MapPath
+
+  - Type: System.Web.HttpRequest
+    TaintTypes:
+      - SCS0018
+    Methods:
+      - Name: MapPath
+
+  #  - Type: System.String
+  #    Methods:
+  #      - Name: IsNullOrWhiteSpace
+  #        InOut: [{"value": "value"}]
+
+  - Type: System.Text.StringBuilder
+    Methods:
+      - Name: Clear
+        CleansInstance: true
+
+  #  - Type: System.IDisposable
+  #    IsInterface: true
+  #    Methods:
+  #      - Name: Dispose
+  #        CleansInstance: true
+
+  - Type: System.Convert
+    Methods:
+      - Name: ToString
+        SignatureNot: ["System.String"]
+      - Name: ToByte
+      - Name: ToSByte
+      - Name: ToChar
+      - Name: ToBoolean
+      - Name: ToInt16
+      - Name: ToInt32
+      - Name: ToInt64
+      - Name: ToUInt16
+      - Name: ToUInt32
+      - Name: ToUInt64
+      - Name: ToSingle
+      - Name: ToDouble
+      - Name: ToDecimal
+      - Name: ToDateTime
+
+
+  - Type: System.Byte
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.SByte
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Char
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Boolean
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"value": "result"}]
+
+  - Type: System.Int16
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Int32
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Int64
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.UInt16
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.UInt32
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.UInt64
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.IntPtr
+    Methods:
+      - Name: ToString
+
+  - Type: System.UIntPtr
+    Methods:
+      - Name: ToString
+
+  - Type: System.Single
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Double
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Decimal
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+
+  - Type: System.Guid
+    Methods:
+      - Name: .ctor
+      - Name: ToString
+      - Name: Parse
+      - Name: ParseExact
+      - Name: TryParse
+        InOut: [{"input": "result"}]
+      - Name: TryParseExact
+        InOut: [{"input": "result"}]
+
+  - Type: System.DateTime
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: ParseExact
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+      - Name: TryParseExact
+        InOut: [{"s": "result"}]
+
+  - Type: System.TimeSpan
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: ParseExact
+      - Name: TryParse
+        InOut: [{"s": "result"}]
+      - Name: TryParseExact
+        InOut: [{"s": "result"}]
+
+  - Type: System.DateTimeOffset
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: ParseExact
+      - Name: TryParse
+        InOut: [{"input": "result"}]
+      - Name: TryParseExact
+        InOut: [{"input": "result"}]
+
+  - Type: System.Enum
+    Methods:
+      - Name: ToString
+      - Name: Parse
+      - Name: TryParse
+        InOut: [{"value": "result"}]
+
+Transfers:
+
+  - Type: System.Uri
+    Methods:
+      - Name: TryCreate
+        InOut: [{"uriString": "result"}, {"baseUri": "result"}, {"relativeUri": "result"}]
+
+  - Type: System.Text.StringBuilder
+    Methods:
+      - Name: Append
+        InOut: [{"value": ".This"}]
+      - Name: AppendFormat
+        InOut: [{"format": ".This"}, {"arg0": ".This"}, {"arg1": ".This"}, {"arg2": ".This"}, {"args": ".This"}]
+      - Name: AppendJoin
+        InOut: [{"separator": ".This"}, {"values": ".This"}]
+      - Name: AppendLine
+        InOut: [{"value": ".This"}]
+      - Name: CopyTo
+        InOut: [{".This": "destination"}]
+      - Name: Insert
+        InOut: [{"value": ".This"}]
+      - Name: Replace
+        InOut: [{"newValue": ".This"}, {"newChar": ".This"}]
+
+  - Type: System.IO.Stream
+    Methods:
+      - Name: BeginWrite
+        InOut: [{"buffer": ".This"}]
+      - Name: CopyTo
+        InOut: [{".This": "destination"}]
+      - Name: CopyToAsync
+        InOut: [{".This": "destination"}]
+      - Name: Read
+        InOut: [{".This": "buffer"}]
+      - Name: ReadAsync
+        InOut: [{".This": "buffer"}]
+      - Name: Write
+        InOut: [{"buffer": ".This"}]
+      - Name: WriteAsync
+        InOut: [{"buffer": ".This"}]
+      - Name: WriteByte
+        InOut: [{"value": ".This"}]
+
+Sinks:
+
+ # Hardcoded passwords
+
+  - Type: System.Net.NetworkCredential
+    TaintTypes:
+      - SCS0015
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - password
+
+  - Type: System.Security.Cryptography.PasswordDeriveBytes
+    TaintTypes:
+      - SCS0015
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - password
+        - salt
+        - strPassword
+        - rgbSalt
+
+  - Type: System.UriBuilder
+    TaintTypes:
+      - SCS0015
+    Properties:
+      - Password
+
+  - Type: System.Security.Cryptography.SymmetricAlgorithm
+    TaintTypes:
+      - SCS0015
+    Properties:
+      - IV
+      - Key
+
+ # Process
+
+  - Type: System.Diagnostics.Process
+    TaintTypes:
+      - SCS0001
+    Methods:
+    - Name: Start
+      Arguments:
+        - fileName
+        - arguments
+
+  - Type: System.Diagnostics.ProcessStartInfo
+    TaintTypes:
+      - SCS0001
+    IsAnyStringParameterInConstructorASink: true
+    Properties:
+      - ArgumentList
+      - Arguments
+      - FileName
+
+ # Deserialization
+
+  - Type: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Deserialize
+      Arguments:
+        - serializationStream
+    - Name: UnsafeDeserialize
+      Arguments:
+        - serializationStream
+    - Name: UnsafeDeserializeMethodResponse
+      Arguments:
+        - serializationStream
+
+  - Type: System.Messaging.BinaryMessageFormatter
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Read
+      Arguments:
+        - message
+
+  - Type: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Deserialize
+      Arguments:
+        - serializationStream
+
+  - Type: System.Web.UI.ObjectStateFormatter
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Deserialize
+      Arguments:
+        - inputStream
+        - inputString
+
+  - Type: System.Runtime.Serialization.XmlObjectSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: ReadObject
+      Arguments:
+        - stream
+        - reader
+
+  - Type: System.Runtime.Serialization.NetDataContractSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Deserialize
+      Arguments:
+        - stream
+    - Name: ReadObject
+      Arguments:
+        - reader
+
+  - Type: System.Runtime.Serialization.DataContractSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - type
+    - Name: ReadObject
+      Arguments:
+        - reader
+
+  - Type: System.Runtime.Serialization.Json.DataContractJsonSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - type
+    - Name: ReadObject
+      Arguments:
+        - stream
+        - reader
+
+  - Type: System.Xml.Serialization.XmlSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - type
+    - Name: Deserialize
+      Arguments:
+        - stream
+        - textReader
+        - reader
+        - xmlReader
+
+  - Type: System.Messaging.XmlMessageFormatter
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Read
+      Arguments:
+        - message
+
+  - Type: System.Web.UI.LosFormatter
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: Deserialize
+      Arguments:
+        - stream
+        - input
+
+  - Type: fastJSON.JSON
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: ToObject
+      Arguments:
+        - json
+
+  - Type: ServiceStack.Text.JsonSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - value
+        - type
+    - Name: DeserializeFromReader
+      Arguments:
+        - reader
+        - type
+    - Name: DeserializeFromStream
+      Arguments:
+        - stream
+        - type
+    - Name: DeserializeRequest
+      Arguments:
+        - webRequest
+        - type
+    - Name: DeserializeResponse
+      Arguments:
+        - webResponse
+        - type
+
+  - Type: ServiceStack.Text.JsonSerializer`1
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - value
+    - Name: DeserializeFromReader
+      Arguments:
+        - reader
+
+  - Type: ServiceStack.Text.JsonStringSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - serializedText
+        - type
+
+  - Type: ServiceStack.Text.TypeSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - value
+        - type
+    - Name: DeserializeFromReader
+      Arguments:
+        - reader
+        - type
+    - Name: DeserializeFromStream
+      Arguments:
+        - stream
+        - type
+
+  - Type: ServiceStack.Text.TypeSerializer`1
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - value
+    - Name: DeserializeFromReader
+      Arguments:
+        - reader
+
+  - Type: ServiceStack.Text.CsvSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - text
+        - type
+    - Name: DeserializeFromReader
+      Arguments:
+        - reader
+        - type
+    - Name: DeserializeFromStream
+      Arguments:
+        - stream
+        - type
+
+  - Type: ServiceStack.Text.CsvSerializer`1
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: ReadObject
+      Arguments:
+        - value
+
+  - Type: ServiceStack.Text.XmlSerializer
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: DeserializeFromString
+      Arguments:
+        - xml
+        - type
+    - Name: DeserializeFromReader
+      Arguments:
+        - reader
+        - type
+    - Name: DeserializeFromStream
+      Arguments:
+        - stream
+        - type
+
+  - Type: System.Resources.ResourceReader
+    TaintTypes:
+      - SCS0028
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - stream
+        - fileName
+
+  - Type: Newtonsoft.Json.JsonSerializerSettings
+    TaintTypes:
+      - SCS0028
+    Properties:
+      - TypeNameHandling
+
+ # LDAP injection
+
+  - Type: System.DirectoryServices.DirectorySearcher
+    TaintTypes:
+      - SCS0031
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - filter
+    Properties:
+      - Filter
+
+  - Type: System.DirectoryServices.DirectoryEntry
+    TaintTypes:
+      - SCS0026
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - path
+    Properties:
+      - Path
+
+ # Open Redirect
+
+  - Type: System.Web.HttpResponse
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - url
+    - Name: RedirectPermanent
+      Arguments:
+        - url
+    - Name: RedirectToRoute
+      Arguments:
+        - routeName
+    - Name: RedirectToRoutePermanent
+      Arguments:
+        - routeName
+    Properties:
+      - RedirectLocation
+
+  - Type: System.Web.HttpResponseBase
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - url
+    - Name: RedirectPermanent
+      Arguments:
+        - url
+    - Name: RedirectToRoute
+      Arguments:
+        - routeName
+    - Name: RedirectToRoutePermanent
+      Arguments:
+        - routeName
+    Properties:
+      - RedirectLocation
+
+  - Type: Microsoft.AspNetCore.Http.HttpResponse
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - location
+
+  - Type: System.Web.Http.ApiController
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - location
+
+  - Type: System.Web.Mvc.Controller
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - url
+    - Name: RedirectPermanent
+      Arguments:
+        - url
+
+  - Type: Microsoft.AspNetCore.Mvc.ControllerBase
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - url
+    - Name: RedirectPermanent
+      Arguments:
+        - url
+    - Name: RedirectPreserveMethod
+      Arguments:
+        - url
+    - Name: RedirectPermanentPreserveMethod
+      Arguments:
+        - url
+
+  - Type: Microsoft.AspNetCore.Mvc.RazorPages.PageModel
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: Redirect
+      Arguments:
+        - url
+    - Name: RedirectPermanent
+      Arguments:
+        - url
+    - Name: RedirectPreserveMethod
+      Arguments:
+        - url
+    - Name: RedirectPermanentPreserveMethod
+      Arguments:
+        - url
+
+  - Type: System.Web.Mvc.RedirectResult
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - url
+    Properties:
+      - Url
+
+  - Type: Microsoft.AspNetCore.Mvc.RedirectResult
+    TaintTypes:
+      - SCS0027
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - url
+    Properties:
+      - Url
+
+ # Path traversal
+
+  - Type: System.IO.Directory
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: Delete
+      Arguments:
+        - path
+    - Name: GetFiles
+      Arguments:
+        - path
+    - Name: Move
+      Arguments:
+        - sourceDirName
+        - destDirName
+
+  - Type: System.IO.File
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: AppendAllLines
+      Arguments:
+        - path
+    - Name: AppendAllLinesAsync
+      Arguments:
+        - path
+    - Name: AppendAllText
+      Arguments:
+        - path
+    - Name: AppendAllTextAsync
+      Arguments:
+        - path
+    - Name: AppendText
+      Arguments:
+        - path
+    - Name: Copy
+      Arguments:
+        - sourceFileName
+        - destFileName
+    - Name: Create
+      Arguments:
+        - path
+    - Name: CreateText
+      Arguments:
+        - path
+    - Name: Delete
+      Arguments:
+        - path
+    - Name: Move
+      Arguments:
+        - sourceFileName
+        - destFileName
+    - Name: Open
+      Arguments:
+        - path
+    - Name: OpenRead
+      Arguments:
+        - path
+    - Name: OpenText
+      Arguments:
+        - path
+    - Name: OpenWrite
+      Arguments:
+        - path
+    - Name: ReadAllBytes
+      Arguments:
+        - path
+    - Name: ReadAllBytesAsync
+      Arguments:
+        - path
+    - Name: ReadAllLines
+      Arguments:
+        - path
+    - Name: ReadAllLinesAsync
+      Arguments:
+        - path
+    - Name: ReadAllText
+      Arguments:
+        - path
+    - Name: ReadAllTextAsync
+      Arguments:
+        - path
+    - Name: ReadLines
+      Arguments:
+        - path
+    - Name: Replace
+      Arguments:
+        - sourceFileName
+        - destinationFileName
+        - destinationBackupFileName
+    - Name: SetAccessControl
+      Arguments:
+        - path
+    - Name: WriteAllBytes
+      Arguments:
+        - path
+    - Name: WriteAllBytesAsync
+      Arguments:
+        - path
+    - Name: WriteAllLines
+      Arguments:
+        - path
+    - Name: WriteAllLinesAsync
+      Arguments:
+        - path
+    - Name: WriteAllText
+      Arguments:
+        - path
+    - Name: WriteAllTextAsync
+      Arguments:
+        - path
+
+  - Type: System.IO.FileInfo
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - fileName
+    - Name: CopyTo
+      Arguments:
+        - destFileName
+    - Name: MoveTo
+      Arguments:
+        - destFileName
+    - Name: Replace
+      Arguments:
+        - destinationFileName
+        - destinationBackupFileName
+
+  - Type: System.Reflection.Assembly
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: LoadFile
+      Arguments:
+        - path
+    - Name: LoadFrom
+      Arguments:
+        - assemblyFile
+    - Name: ReflectionOnlyLoadFrom
+      Arguments:
+        - assemblyFile
+    - Name: UnsafeLoadFrom
+      Arguments:
+        - assemblyFile
+
+  - Type: System.AppDomain
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: AppendPrivatePath
+      Arguments:
+        - path
+
+  - Type: System.Xml.XmlReader
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: Create
+      Arguments:
+        - inputUri
+
+  - Type: System.IO.StreamReader
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - path
+
+  - Type: System.IO.StreamWriter
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - path
+
+  - Type: System.IO.FileStream
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - handle
+        - path
+
+  - Type: System.Web.Mvc.FilePathResult
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - fileName
+    Properties:
+      - FileName
+
+  - Type: Microsoft.AspNetCore.Mvc.PhysicalFileResult
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - fileName
+    Properties:
+      - FileName
+
+  - Type: Microsoft.AspNetCore.Mvc.RazorPages.PageModel
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: PhysicalFile
+      Arguments:
+        - physicalPath
+
+  - Type: System.Web.UI.WebControls.FileUpload
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: SaveAs
+      Arguments:
+        - filename
+
+  - Type: System.Web.HttpResponse
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: TransmitFile
+      Arguments:
+        - filename
+    - Name: WriteFile
+      Arguments:
+        - filename
+        - fileHandle
+
+  - Type: System.Web.HttpResponseBase
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: TransmitFile
+      Arguments:
+        - filename
+    - Name: WriteFile
+      Arguments:
+        - filename
+        - fileHandle
+
+  - Type: System.IO.Compression.ZipFileExtensions
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: CreateEntryFromFile
+      Arguments:
+        - sourceFileName
+    - Name: ExtractToFile
+      Arguments:
+        - destinationFileName
+    - Name: ExtractToDirectory
+      Arguments:
+        - destinationDirectoryName
+
+  - Type: System.Net.WebClient
+    TaintTypes:
+      - SCS0018
+    Methods:
+    - Name: DownloadFile
+      Arguments:
+        - fileName
+    - Name: DownloadFileAsync
+      Arguments:
+        - fileName
+    - Name: DownloadFileTaskAsync
+      Arguments:
+        - fileName
+
+ # XSS
+
+# too many warnings, disable for now
+#  - Type: Microsoft.AspNetCore.Mvc.Controller
+#    TaintTypes:
+#      - SCS0029
+#    Methods:
+#    - Name: View
+#      Arguments:
+#        - model
+
+  - Type: System.Web.Mvc.HtmlHelper
+    TaintTypes:
+      - SCS0029
+    Methods:
+    - Name: Raw
+      Arguments:
+        - value
+
+  - Type: Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper
+    TaintTypes:
+      - SCS0029
+    IsInterface: true
+    Methods:
+    - Name: Raw
+      Arguments:
+        - value
+
+  - Type: System.Web.HttpResponse
+    TaintTypes:
+      - SCS0029
+    Methods:
+    - Name: AddHeader
+      Arguments:
+        - value
+    - Name: AppendHeader
+      Arguments:
+        - value
+    - Name: Write
+      Arguments:
+        - ch
+        - obj
+        - s
+        - buffer
+    - Name: BinaryWrite
+      Arguments:
+        - buffer
+    - Name: TransmitFile
+      Arguments:
+        - filename
+    - Name: WriteFile
+      Arguments:
+        - filename
+    Properties:
+      - ContentType
+
+  - Type: System.Web.HttpResponseBase
+    TaintTypes:
+      - SCS0029
+    Methods:
+    - Name: AddHeader
+      Arguments:
+        - value
+    - Name: AppendHeader
+      Arguments:
+        - value
+    - Name: Write
+      Arguments:
+        - ch
+        - obj
+        - s
+        - buffer
+    - Name: BinaryWrite
+      Arguments:
+        - buffer
+    - Name: WriteFile
+      Arguments:
+        - filename
+    Properties:
+      - ContentType
+
+  - Type: System.Web.UI.ITextControl
+    TaintTypes:
+      - SCS0029
+    IsInterface: true
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.DesignerDataBoundLiteralControl
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.CheckBox
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.CheckBoxField
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.CompareValidator
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.CustomValidator
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.DetailsView
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.FormView
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.GridView
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.HyperLink
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+      - NavigateUrl
+      - ImageUrl
+
+  - Type: System.Web.UI.WebControls.HyperLinkColumn
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.HyperLinkField
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.ImageButton
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.Image
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - ImageUrl
+
+  - Type: System.Web.UI.WebControls.Label
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.LinkButton
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.ListControl
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.ListItem
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.Literal
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.MenuItem
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.MenuItemBinding
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+      - TextField
+
+  - Type: System.Web.UI.WebControls.RadioButton
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+      - GroupName
+
+  - Type: System.Web.UI.WebControls.RangeValidator
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.RegularExpressionValidator
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.RequiredFieldValidator
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.RepeatInfo
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.TextBox
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - TextMode
+
+  - Type: System.Web.UI.WebControls.TreeNode
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.TreeNodeBinding
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+      - TextField
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartCatalogAddVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartCatalogCloseVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartCloseVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartConnectionsCancelVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartConnectionsCloseVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartConnectionsConfigureVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartConnectionsConnectVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartConnectionsDisconnectVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartConnectVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartDeleteVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartEditorApplyVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartEditorCancelVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartEditorOKVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartEditVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartExportVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartHeaderCloseVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartHelpVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartMinimizeVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartRestoreVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.WebParts.WebPartVerb
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.TableCell
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.Calendar
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.Table
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.Panel
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - GroupingText
+
+  - Type: System.Web.UI.HtmlControls.HtmlContainerControl
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - InnerHtml
+
+  - Type: System.Web.UI.HtmlControls.HtmlInputControl
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Value
+
+  - Type: System.Web.UI.HtmlControls.HtmlTitle
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.HtmlTextWriter
+    TaintTypes:
+      - SCS0029
+    Methods:
+    - Name: AddAttribute
+      Arguments:
+        - name
+        - value
+    - Name: AddStyleAttribute
+      Arguments:
+        - name
+        - value
+    - Name: RenderBeginTag
+      Arguments:
+        - tagName
+    - Name: Write
+      Arguments:
+        - s
+        - value
+        - format
+        - arg0
+        - arg1
+        - arg
+        - buffer
+    - Name: WriteAttribute
+      Arguments:
+        - name
+        - value
+    - Name: WriteBeginTag
+      Arguments:
+        - tagName
+    - Name: WriteEndTag
+      Arguments:
+        - tagName
+    - Name: WriteFullBeginTag
+      Arguments:
+        - tagName
+    - Name: WriteStyleAttribute
+      Arguments:
+        - name
+        - value
+
+  - Type: System.Web.UI.LiteralControl
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.ResourceBasedLiteralControl
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.TemplateBuilder
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.BaseDataList
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Caption
+
+  - Type: System.Web.UI.WebControls.BaseValidator
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.Button
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.ButtonColumn
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.WebControls.ButtonField
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - Text
+
+  - Type: System.Web.UI.ClientScriptManager
+    TaintTypes:
+      - SCS0029
+    Methods:
+    - Name: RegisterStartupScript
+      Arguments:
+        - script
+    - Name: RegisterClientScriptBlock
+      Arguments:
+        - script
+
+  - Type: System.Web.UI.Page
+    TaintTypes:
+      - SCS0029
+    Methods:
+    - Name: RegisterStartupScript
+      Arguments:
+        - script
+    - Name: RegisterClientScriptBlock
+      Arguments:
+        - script
+
+  - Type: System.Web.UI.Control
+    TaintTypes:
+      - SCS0029
+    Properties:
+      - ID
+
+ # XPath
+
+  - Type: System.Xml.XmlNode
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: SelectNodes
+      Arguments:
+        - xpath
+    - Name: SelectSingleNode
+      Arguments:
+        - xpath
+
+  - Type: System.Xml.XPath.XPathNavigator
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: Compile
+      Arguments:
+        - xpath
+    - Name: Evaluate
+      Arguments:
+        - xpath
+    - Name: Matches
+      Arguments:
+        - xpath
+    - Name: Select
+      Arguments:
+        - xpath
+    - Name: SelectAncestors
+      Arguments:
+        - name
+    - Name: SelectChildren
+      Arguments:
+        - name
+    - Name: SelectDescendants
+      Arguments:
+        - name
+    - Name: SelectSingleNode
+      Arguments:
+        - xpath
+
+  - Type: System.Xml.XPath.XPathExpression
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: Compile
+      Arguments:
+        - xpath
+
+  - Type: System.Xml.XPath.Extensions
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: XPathSelectElement
+      Arguments:
+        - expression
+    - Name: XPathSelectElements
+      Arguments:
+        - expression
+    - Name: XPathEvaluate
+      Arguments:
+        - expression
+
+  - Type: System.Web.UI.PageTheme
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: XPath
+      Arguments:
+        - xPathExpression
+    - Name: XPathSelect
+      Arguments:
+        - xPathExpression
+
+  - Type: System.Web.UI.TemplateControl
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: XPath
+      Arguments:
+        - xPathExpression
+    - Name: XPathSelect
+      Arguments:
+        - xPathExpression
+
+  - Type: System.Web.UI.WebControls.XmlDataSource
+    TaintTypes:
+      - SCS0003
+    Properties:
+      - XPath
+
+  - Type: System.Web.UI.XPathBinder
+    TaintTypes:
+      - SCS0003
+    Methods:
+    - Name: Eval
+      Arguments:
+        - xPath
+    - Name: Select
+      Arguments:
+        - xPath
+
+  - Type: System.Xml.Schema.XmlSchemaXPath
+    TaintTypes:
+      - SCS0003
+    Properties:
+      - XPath
+
+ # SQL Injection
+
+  - Type: System.Data.IDbCommand
+    TaintTypes:
+      - SCS0002
+    IsAnyStringParameterInConstructorASink: true
+    IsInterface: true
+    Properties:
+      - CommandText
+
+  - Type: System.Data.IDataAdapter
+    TaintTypes:
+      - SCS0002
+    IsAnyStringParameterInConstructorASink: true
+    IsInterface: true
+
+  - Type: System.Data.Linq.DataContext
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: ExecuteQuery
+      Arguments:
+        - query
+    - Name: ExecuteCommand
+      Arguments:
+        - command
+
+  - Type: MySql.Data.MySqlClient.MySqlHelper
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: ExecuteDataRow
+      Arguments:
+        - commandText
+    - Name: ExecuteDataRowAsync
+      Arguments:
+        - commandText
+    - Name: ExecuteDataset
+      Arguments:
+        - commandText
+    - Name: ExecuteDatasetAsync
+      Arguments:
+        - commandText
+    - Name: ExecuteNonQuery
+      Arguments:
+        - commandText
+    - Name: ExecuteNonQueryAsync
+      Arguments:
+        - commandText
+    - Name: ExecuteReader
+      Arguments:
+        - commandText
+    - Name: ExecuteReaderAsync
+      Arguments:
+        - commandText
+    - Name: ExecuteScalar
+      Arguments:
+        - commandText
+    - Name: ExecuteScalarAsync
+      Arguments:
+        - commandText
+    - Name: UpdateDataSet
+      Arguments:
+        - commandText
+    - Name: UpdateDataSetAsync
+      Arguments:
+        - commandText
+
+  - Type: System.Data.SQLite.SQLiteCommand
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: Execute
+      Arguments:
+        - commandText
+
+  - Type: System.Web.UI.WebControls.SqlDataSource
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: .ctor
+      Arguments:
+        - selectCommand
+    Properties:
+      - DeleteCommand
+      - InsertCommand
+      - SelectCommand
+      - UpdateCommand
+
+  - Type: System.Data.Entity.Database
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: SqlQuery
+      Arguments:
+        - sql
+    - Name: ExecuteSqlCommand
+      Arguments:
+        - sql
+    - Name: ExecuteSqlCommandAsync
+      Arguments:
+        - sql
+
+  - Type: System.Data.Entity.DbSet
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: SqlQuery
+      Arguments:
+        - sql
+
+  - Type: System.Data.Entity.DbSet`1
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: SqlQuery
+      Arguments:
+        - sql
+
+  - Type: Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: ExecuteSqlCommand
+      Arguments:
+        - sql
+    - Name: ExecuteSqlCommandAsync
+      Arguments:
+        - sql
+    - Name: ExecuteSqlRaw
+      Arguments:
+        - sql
+    - Name: ExecuteSqlRawAsync
+      Arguments:
+        - sql
+
+  - Type: Microsoft.EntityFrameworkCore.RelationalQueryableExtensions
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: FromSqlRaw
+      Arguments:
+        - sql
+    - Name: FromSql
+      Arguments:
+        - sql
+
+  - Type: Microsoft.Practices.EnterpriseLibrary.Data.Database
+    TaintTypes:
+      - SCS0002
+    Methods:
+    - Name: GetSqlStringCommand
+      Arguments:
+        - query
+    - Name: ExecuteDataSet
+      Arguments:
+        - commandText
+        - storedProcedureName
+    - Name: ExecuteReader
+      Arguments:
+        - commandText
+        - storedProcedureName
+    - Name: ExecuteNonQuery
+      Arguments:
+        - commandText
+        - storedProcedureName
+    - Name: ExecuteScalar
+      Arguments:
+        - commandText
+        - storedProcedureName
+
+  - Type: NHibernate.ISession
+    TaintTypes:
+      - SCS0002
+    IsInterface: true
+    Methods:
+    - Name: CreateSQLQuery
+      Arguments:
+        - queryString
+
+  - Type: Cassandra.ISession
+    TaintTypes:
+      - SCS0002
+    IsInterface: true
+    Methods:
+    - Name: Execute
+      Arguments:
+        - cqlQuery
+
+# Verifies if the class methods have necessary attributes. Allows to define custom anti CSRF attributes with conditions.
+# The format is:
+# <<<
+# CsrfCheck:
+#   {Name}: # Unique entry name. If a group only with the name is provided, it deletes already existing group with the same name. Use it to override existing settings.
+#   - Name: "Unique group name. Multiple entries with the unique Name are supported. Use it to add an additional attributes to the already existing configuration."
+#     Message: # Optional.
+#       Title: "Warning title to display if matched"
+#       Description: "Detailed warning message"
+#     RequiredAttributes: # Optional. A list of attributes which indicate the class or method is safe.
+#       - Type: "Fully qualified type of the attribute"
+#         Condition:
+#           - "Optional. In format of { 0: { Value: 0}, ...}"
+#           - "Optional. In format of { 0: { Value: 0}, ...}"
+#     Class: # Optional. Either 'Type:' or 'Attributes:' below must be specified. Settings checked against the class being analyzed.
+#       Type: # Optional. Apply the rule to classes derived from the list.
+#         - "Fully qualified type of the class"
+#         - "Fully qualified type of the class"
+#       Attributes: # Optional. Class attributes to filter by.
+#         Include: # Optional. Apply the rule to classes with any of the attributes below.
+#           - Type: "Fully qualified type of the attribute"
+#             Condition:
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#         Exclude: # Optional. Do not apply the rule to classes with any of the attributes below.
+#           - Type: "Fully qualified type of the attribute"
+#             Condition:
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#     Method: # Optional. Settings checked against the method being analyzed.
+#       Attributes: # Method attributes to filter by.
+#         Include: # Optional. Apply the rule to methods with any of the attributes below.
+#           - Type: "Fully qualified type of the attribute"
+#             Condition:
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#         Exclude: # Optional. Do not apply the rule to methods with any of the attributes below.
+#           - Type: "Fully qualified type of the attribute"
+#             Condition:
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#     Parameter: # Optional. Settings checked against the parameter of a method being analyzed.
+#       Attributes: # Parameter attributes to filter by.
+#         Include: # Optional. Apply the rule to parameters with any of the attributes below.
+#           - Type: "Fully qualified type of the attribute"
+#             Condition:
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#         Exclude: # Optional. Do not apply the rule to parameters with any of the attributes below.
+#           - Type: "Fully qualified type of the attribute"
+#             Condition:
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+#               - "Optional. In format of { 0: { Value: 0}, ...}"
+# <<<
+#
+# Multiple entries with unique Name are supported.
+# To add additional anti CSRF tokens to an existing rule do in user or project config:
+# CsrfCheck:
+#   - Name: ASP.NET MVC
+#     RequiredAttributes:
+#       - Type: "Fully qualified type of the custom anti CSRF attribute"
+#
+# The analysis starts from a class down to method parameters. If all rules apply (like a presence and absence of a specific attributes)
+#  the method needs CSRF protection.
+#
+# All *Attributes entries have an optional Condition, which is a dictionary of constructor parameters (indicated by indexes) and
+#  Property names to Values.  Attributes with conditions will only be considered when the condition is true, attributes
+#  without conditions will always be considered.
+#
+# Conditions can have integer, string, or boolean values.  
+#  For example
+#    - Type: MyAttribute
+#      Condition:
+#        - { 1: {Value: 32 }, FirstProperty: {Value: foo }, SecondProperty: { Value: true } }
+#  will match 
+#   [My(null, 32, FirstProperty = "foo", SecondProperty = true)]
+
+CsrfCheck:
+  Mvc:
+    Name: ASP.NET MVC
+    Dependency:
+      - System.Web.Mvc.Controller
+    RequiredAttributes:
+      Include:
+        - Type: System.Web.Mvc.ValidateAntiForgeryTokenAttribute
+    Class:
+      Accessibility:
+        - public
+      Parent: System.Web.Mvc.Controller
+      Suffix:
+        Text: Controller
+        IncludeParent: false
+      Attributes:
+        Exclude:
+          - Type: System.Web.Mvc.AllowAnonymousAttribute
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Include:
+          - Type: System.Web.Mvc.HttpPostAttribute
+          - Type: System.Web.Mvc.HttpPutAttribute
+          - Type: System.Web.Mvc.HttpDeleteAttribute
+          - Type: System.Web.Mvc.HttpPatchAttribute
+        Exclude:
+          - Type: System.Web.Mvc.NonActionAttribute
+          - Type: System.Web.Mvc.AllowAnonymousAttribute
+
+  CoreMvc:
+    Name: ASP.NET Core MVC
+    Dependency:
+      - Microsoft.AspNetCore.Mvc.ControllerBase
+      - Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+      - Microsoft.AspNetCore.Mvc.ControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonActionAttribute
+      - Microsoft.AspNetCore.Mvc.FromServicesAttribute
+    RequiredAttributes:
+      Include:
+        - Type: Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute
+        - Type: Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute
+    Class:
+      Accessibility:
+        - public
+      Suffix:
+        Text: Controller
+        IncludeParent: true
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.ControllerAttribute
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonControllerAttribute
+          - Type: Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute
+          - Type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute
+          - Type: Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.HttpPostAttribute
+          - Type: Microsoft.AspNetCore.Mvc.HttpPutAttribute
+          - Type: Microsoft.AspNetCore.Mvc.HttpDeleteAttribute
+          - Type: Microsoft.AspNetCore.Mvc.HttpPatchAttribute
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonActionAttribute
+          - Type: Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute
+          - Type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute
+    Parameter:
+      Attributes:
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.FromBodyAttribute
+
+  CoreMvcApiController:
+    Name: ASP.NET Core MVC ApiController
+    Dependency:
+      - Microsoft.AspNetCore.Mvc.ControllerBase
+      - Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+      - Microsoft.AspNetCore.Mvc.ControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonActionAttribute
+      - Microsoft.AspNetCore.Mvc.FromServicesAttribute
+    RequiredAttributes:
+      Include:
+        - Type: Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute
+        - Type: Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute
+    Class:
+      Accessibility:
+        - public
+      Suffix:
+        Text: Controller
+        IncludeParent: true
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.ControllerAttribute
+          - Type: Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonControllerAttribute
+          - Type: Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute
+          - Type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.HttpPostAttribute
+          - Type: Microsoft.AspNetCore.Mvc.HttpPutAttribute
+          - Type: Microsoft.AspNetCore.Mvc.HttpDeleteAttribute
+          - Type: Microsoft.AspNetCore.Mvc.HttpPatchAttribute
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonActionAttribute
+          - Type: Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute
+          - Type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute
+    Parameter:
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.FromFormAttribute
+
+AuthorizeCheck:
+  Mvc:
+    Name: ASP.NET MVC
+    Dependency:
+      - System.Web.Mvc.Controller
+    RequiredAttributes:
+      Include:
+        - Type: System.Web.Mvc.IAuthorizationFilter
+      Exclude:
+        - Type: System.Web.Mvc.ChildActionOnlyAttribute
+        - Type: System.Web.Mvc.Controller
+        - Type: System.Web.Mvc.RequireHttpsAttribute
+        - Type: System.Web.Mvc.ValidateAntiForgeryTokenAttribute
+        - Type: System.Web.Mvc.ValidateInputAttribute
+    Class:
+      Accessibility:
+        - public
+      Parent: System.Web.Mvc.Controller
+      Suffix:
+        Text: Controller
+        IncludeParent: false
+      Attributes:
+        Exclude:
+          - Type: System.Web.Mvc.AllowAnonymousAttribute
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Exclude:
+          - Type: System.Web.Mvc.NonActionAttribute
+          - Type: System.Web.Mvc.AllowAnonymousAttribute
+
+  CoreMvc:
+    Name: ASP.NET Core MVC
+    Dependency:
+      - Microsoft.AspNetCore.Mvc.ControllerBase
+      - Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+      - Microsoft.AspNetCore.Mvc.ControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonControllerAttribute
+      - Microsoft.AspNetCore.Mvc.NonActionAttribute
+      - Microsoft.AspNetCore.Mvc.FromServicesAttribute
+    RequiredAttributes:
+      Include:
+        - Type: Microsoft.AspNetCore.Authorization.IAuthorizeData
+        - Type: Microsoft.AspNetCore.Mvc.Filters.IAuthorizationFilter
+      Exclude:
+        - Type: Microsoft.AspNetCore.Mvc.RequireHttpsAttribute
+    Class:
+      Accessibility:
+        - public
+      Suffix:
+        Text: Controller
+        IncludeParent: true
+      Attributes:
+        Include:
+          - Type: Microsoft.AspNetCore.Mvc.ControllerAttribute
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonControllerAttribute
+          - Type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute
+    Method:
+      Accessibility:
+        - public
+      IncludeConstructor: false
+      Static: false
+      Attributes:
+        Exclude:
+          - Type: Microsoft.AspNetCore.Mvc.NonActionAttribute
+          - Type: Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute

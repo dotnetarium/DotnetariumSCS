@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="AC75576D-4144-4F7B-8389-E9C8030BE61F" Version="$version$" Language="en-US" Publisher="JaroslavLobacevski"/>
+        <DisplayName>Security Code Scan (for VS2019 and newer)</DisplayName>
+        <Description xml:space="preserve">Security static code analyzer for .NET</Description>
+        <MoreInfo>https://security-code-scan.github.io</MoreInfo>
+        <License>LICENSE-LGPL.txt</License>
+        <GettingStartedGuide>https://security-code-scan.github.io/#Installation</GettingStartedGuide>
+        <ReleaseNotes>https://security-code-scan.github.io/#ReleaseNotes</ReleaseNotes>
+        <Icon>icon.png</Icon>
+        <PreviewImage>preview.png</PreviewImage>
+        <Tags>SecurityCodeScan;Security.Code.Scan;Security Code Scan;Static Code Analysis;Security;Vulnerability;Analyzer;Analyzers;.NET;Roslyn;OWASP;Injection;XSS;CSRF;XXE;SQLi</Tags>
+    </Metadata>
+    <Installation>
+		<InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Pro">
+			<ProductArchitecture>x86</ProductArchitecture>
+		</InstallationTarget>
+		<InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Community">
+			<ProductArchitecture>x86</ProductArchitecture>
+		</InstallationTarget>
+		<InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Enterprise">
+			<ProductArchitecture>x86</ProductArchitecture>
+		</InstallationTarget>
+		<InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Pro">
+			<ProductArchitecture>amd64</ProductArchitecture>
+		</InstallationTarget>
+		<InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Community">
+			<ProductArchitecture>amd64</ProductArchitecture>
+		</InstallationTarget>
+		<InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Enterprise">
+			<ProductArchitecture>amd64</ProductArchitecture>
+		</InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="DotnetariumSCS" Path="|DotnetariumSCS|"/>
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="DotnetariumSCS" Path="|DotnetariumSCS|"/>
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0,)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+</PackageManifest>
