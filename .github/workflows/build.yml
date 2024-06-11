@@ -48,7 +48,7 @@ jobs:
         echo "::set-output name=vsTestPath::$vsTestPath"
 
     - name: Setup VSTest
-      uses: darenm/Setup-VSTest@ee4202680b63bd7b2f0deb71ab55104b71917843
+      uses: darenm/Setup-VSTest@v1.2
 
     - name: Restore
       run: nuget restore $env:Solution_Name
