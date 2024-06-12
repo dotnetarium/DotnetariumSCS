@@ -37,8 +37,9 @@ jobs:
     - name: Locate VSTest.console.exe
       id: locate-vstest
       run: |
-        $vsTestPath = &vswhere -latest -products * -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core -find **\VSTest.console.exe
-        echo "::set-output name=vsTestPath::$vsTestPath"
+        $vsPath = &"C:\ProgramData\Chocolatey\bin\vswhere.exe" -latest -property installationPath
+        $vsTestPath = Join-Path $vsPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\VSTest.console.exe'
+        echo "VSTEST_PATH=$vsTestPath" >> $GITHUB_ENV
 
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
@@ -52,7 +53,7 @@ jobs:
       run: msbuild -m $env:Solution_Name /p:Configuration=Release
 
     - name: Run Tests
-      run: vstest.console.exe ./DotnetariumsSCS.Test/bin/Release/DotnetariumSCS.Test.dll
+      run: vstest.console.exe ./DotnetariumSCS.Test/bin/Release/DotnetariumSCS.Test.dll
 
     - name: Zip dotnetarium-scan 4.x
       shell: bash
