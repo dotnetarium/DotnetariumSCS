@@ -30,7 +30,6 @@ jobs:
         dotnet-version: |
           6.0.x
           8.0.x
-        include-prerelease: false
 
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
@@ -48,3 +47,18 @@ jobs:
 
     - name: Run Tests
       run: vstest.console.exe ./SecurityCodeScan.Test/bin/Release/DotnetariumSCS.Test.dll
+
+    - name: Zip dotnetarium-scan 4.x
+      shell: bash
+      run: 7z a dotnetarium-scan4x.zip "./DotnetariumSCS.Tool/.NET 4.x/bin/Release/net48/*"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        retention-days: 1
+        name: packages
+        path: |
+          dotnetarium-scan4x.zip
+          ./DotnetariumSCS/bin/Release/**/*.nupkg
+          ./DotnetariumSCS.Vsix/bin/Release/*.vsix
+          ./DotnetariumSCS.Tool/.NET Core/bin/Release/*.nupkg
