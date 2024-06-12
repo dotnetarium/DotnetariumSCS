@@ -40,7 +40,6 @@ jobs:
         $vsPath = &"C:\ProgramData\Chocolatey\bin\vswhere.exe" -latest -property installationPath
         $vsTestPath = Join-Path $vsPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\VSTest.console.exe'
         echo "VSTest.console.exe path: $vsTestPath"
-        echo "VSTEST_PATH=$vsTestPath" >> $GITHUB_ENV
 
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
@@ -55,8 +54,8 @@ jobs:
 
     - name: Run Tests
       run: |
-        echo "Using VSTest.console.exe at: $env:VSTEST_PATH"
-        & $env:VSTEST_PATH ./DotnetariumSCS.Test/bin/Release/DotnetariumSCS.Test.dll
+        echo "Using VSTest.console.exe at: $vsTestPath"
+        $vsTestPath ./DotnetariumSCS.Test/bin/Release/DotnetariumSCS.Test.dll
 
     - name: Zip dotnetarium-scan 4.x
       shell: bash
