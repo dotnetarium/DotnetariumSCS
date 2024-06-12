@@ -34,6 +34,12 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    - name: Locate VSTest.console.exe
+      id: locate-vstest
+      run: |
+        $vsTestPath = &vswhere -latest -products * -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core -find **\VSTest.console.exe
+        echo "::set-output name=vsTestPath::$vsTestPath"
+
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
 
@@ -46,7 +52,7 @@ jobs:
       run: msbuild -m $env:Solution_Name /p:Configuration=Release
 
     - name: Run Tests
-      run: vstest.console.exe ./SecurityCodeScan.Test/bin/Release/DotnetariumSCS.Test.dll
+      run: vstest.console.exe ./DotnetariumsSCS.Test/bin/Release/DotnetariumSCS.Test.dll
 
     - name: Zip dotnetarium-scan 4.x
       shell: bash
