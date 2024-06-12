@@ -34,13 +34,6 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Locate VSTest.console.exe
-      id: locate-vstest
-      run: |
-        $vsPath = &"C:\ProgramData\Chocolatey\bin\vswhere.exe" -latest -property installationPath
-        $vsTestPath = Join-Path $vsPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\VSTest.console.exe'
-        echo "VSTest.console.exe path: $vsTestPath"
-
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
 
@@ -54,7 +47,9 @@ jobs:
 
     - name: Run Tests
       run: |
-        echo "Using VSTest.console.exe at: $vsTestPath"
+        $vsPath = &"C:\ProgramData\Chocolatey\bin\vswhere.exe" -latest -property installationPath
+        $vsTestPath = Join-Path $vsPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\VSTest.console.exe'
+        echo "VSTest.console.exe path: $vsTestPath"
         $vsTestPath ./DotnetariumSCS.Test/bin/Release/DotnetariumSCS.Test.dll
 
     - name: Zip dotnetarium-scan 4.x
