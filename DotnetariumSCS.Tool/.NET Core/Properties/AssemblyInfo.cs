@@ -1,17 +1,16 @@
 using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Security Code Scan .NET tool")]
+[assembly: AssemblyTitle("Dotnetarium SCS")]
 [assembly: AssemblyDescription("Security static code analyzer for .NET")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://github.com/security-code-scan/security-code-scan")]
-[assembly: AssemblyProduct("Security Code Scan .NET tool")]
-[assembly: AssemblyCopyright("© Security Code Scan")]
+[assembly: AssemblyCompany("https://github.com/dotnetarium/DotnetariumSCS")]
+[assembly: AssemblyProduct("Dotnetarium SCS")]
+[assembly: AssemblyCopyright("© Dotnetarium")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

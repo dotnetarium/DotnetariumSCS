@@ -245,13 +245,8 @@ namespace Dotnetarium.Tool
 
             if (parsedOptions.showBanner)
             {
-                Console.WriteLine($@"
-╔═╗┌─┐┌─┐┬ ┬┬─┐┬┌┬┐┬ ┬  ╔═╗┌─┐┌┬┐┌─┐  ╔═╗┌─┐┌─┐┌┐┌
-╚═╗├┤ │  │ │├┬┘│ │ └┬┘  ║  │ │ ││├┤   ╚═╗│  ├─┤│││
-╚═╝└─┘└─┘└─┘┴└─┴ ┴  ┴   ╚═╝└─┘─┴┘└─┘  ╚═╝└─┘┴ ┴┘└┘
-
-.NET tool by Jaroslav Lobačevski v{versionString}");
-                Console.WriteLine("\n");
+                Console.WriteLine($@"Dotnetarium SCS v{versionString} (based on Security Code Scan by Jaroslav Lobačevski)");
+                Console.WriteLine(Environment.NewLine);
             }
 
             if (parsedOptions.includeWarnings.Any() && parsedOptions.excludeWarnings.Any())

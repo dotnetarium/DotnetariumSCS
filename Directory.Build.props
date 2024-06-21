@@ -3,14 +3,14 @@
     <MicrosoftCodeAnalysisVersion>3.11.0</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
   <Choose>
-    <When Condition=" '$(APPVEYOR_REPO_TAG_NAME)' != '' ">
+    <When Condition=" '$(TAG_VERSION)' != '' ">
       <PropertyGroup>
-        <AssemblyVersionNumber>$(APPVEYOR_REPO_TAG_NAME)</AssemblyVersionNumber>
+        <AssemblyVersionNumber>$(TAG_VERSION)</AssemblyVersionNumber>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <AssemblyVersionNumber>5.6.7.9</AssemblyVersionNumber>
+        <AssemblyVersionNumber>1.0.0.0</AssemblyVersionNumber>
       </PropertyGroup>
     </Otherwise>
   </Choose>

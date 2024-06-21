@@ -6,21 +6,21 @@
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>security-scan</ToolCommandName>
+    <ToolCommandName>dotnetarium-scs</ToolCommandName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageId>security-scan</PackageId>
+    <PackageId>dotnetarium-scs</PackageId>
     <Version>$(AssemblyVersionNumber)</Version>
-    <Authors>Jaroslav Lobačevski</Authors>
-    <Product>Security Code Scan</Product>
-    <Company>https://security-code-scan.github.io/</Company>
-    <Copyright>© Security Code Scan</Copyright>
-    <Description>Stand-alone .NET tool for https://security-code-scan.github.io</Description>
-    <PackageReleaseNotes>https://security-code-scan.github.io/#ReleaseNotes</PackageReleaseNotes>
-    <PackageTags>SecurityCodeScan Security.Code.Scan Security Code Scan StaticAnalysis Vulnerability Analyzer .NET Roslyn OWASP Injection XSS CSRF XXE SQLi</PackageTags>
+    <Authors>Dmitry Balikhin</Authors>
+    <Product>DotnetariumSCS</Product>
+    <Company>https://github.com/dotnetarium</Company>
+    <Copyright>© Dotnetarium</Copyright>
+    <Description>Stand-alone .NET tool for DotnetariumSCS based on Security Code Scan</Description>
+    <PackageReleaseNotes>https://github.com/dotnetarium/DotnetariumSCS/releases</PackageReleaseNotes>
+    <PackageTags>DotnetariumSCS Dotnetarium SCS SecurityCodeScan Security.Code.Scan Security Code Scan StaticAnalysis Vulnerability Analyzer .NET Roslyn OWASP Injection XSS CSRF XXE SQLi</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/security-code-scan/security-code-scan</RepositoryUrl>
-    <PackageProjectUrl>https://security-code-scan.github.io/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dotnetarium/DotnetariumSCS</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/dotnetarium/DotnetariumSCS</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
