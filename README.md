@@ -34,7 +34,7 @@ To install DotnetariumSCS as a NuGet package, add the following package to your 
 
 #### As a Visual Studio extension
 
-Not supported yet. Continue to use (Security Code Scan version)[https://marketplace.visualstudio.com/items?itemName=JaroslavLobacevski.SecurityCodeScanVS2019]
+Not supported yet. Continue to use [Security Code Scan version](https://marketplace.visualstudio.com/items?itemName=JaroslavLobacevski.SecurityCodeScanVS2019).
 At this point, no changes will affect the Visual Studio extension experience.
 
 
