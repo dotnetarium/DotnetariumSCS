@@ -25,7 +25,7 @@ End-of-life .NET versions will be dropped; new stable .NET versions will be adde
 To install DotnetariumSCS as a .NET global tool, run:
 
 ```sh
-dotnet tool install --global DotnetariumSCS
+dotnet tool install --global dotnetarium-scs
 ```
 
 #### As a NuGet Package
