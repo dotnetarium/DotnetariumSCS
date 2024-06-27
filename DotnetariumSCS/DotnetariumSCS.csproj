@@ -11,6 +11,10 @@
   <PropertyGroup>
     <AssemblyName>DotnetariumSCS</AssemblyName>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
   
   <ItemGroup>
     <None Remove="Config\Main.yml" />
@@ -46,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
     <None Update="Diagnostic.nuspec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
