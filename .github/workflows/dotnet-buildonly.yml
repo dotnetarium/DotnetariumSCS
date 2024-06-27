@@ -31,8 +31,12 @@ jobs:
           6.0.x
           8.0.x
 
+    - name: Set MSBUILDDISABLENODEREUSE
+      run: echo "MSBUILDDISABLENODEREUSE=1" >> $env:GITHUB_ENV
+      
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
+      
 
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
@@ -56,7 +60,7 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        retention-days: 1
+        retention-days: 7
         name: packages
         path: |
           dotnetarium-scan4x.zip
