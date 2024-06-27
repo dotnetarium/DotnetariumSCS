@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="1ab1e605-c9e9-465b-b10f-17466d054a57" Version="$version$" Language="en-US" Publisher="DmitryBalikhin"/>
+        <Identity Id="1ab1e605-c9e9-465b-b10f-17466d054a57" Version="1.0.0" Language="en-US" Publisher="DmitryBalikhin"/>
         <DisplayName>Dontetarium SCS</DisplayName>
         <Description xml:space="preserve">Security static code analyzer for .NET based on Security Code Scan</Description>
         <MoreInfo>https://security-code-scan.github.io</MoreInfo>
