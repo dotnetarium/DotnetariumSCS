@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.8">
     <id>DotnetariumSCS</id>
-    <version>$version$</version>
+    <version>1.0.0</version>
     <authors>Dmitry Balikhin</authors>
     <license type="expression">LGPL-3.0-or-later</license>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
