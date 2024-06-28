@@ -46,6 +46,9 @@ jobs:
       env:
         Configuration: ${{ inputs.configuration }}
 
+    - name: Analyzers nuget
+      run: msbuild -m ".\DotnetariumSCS\DotnetariumSCS.csproj" /t:pack /p:Configuration=Release
+
     - name: Build
       run: msbuild -m $env:Solution_Name /p:Configuration=Release
 
