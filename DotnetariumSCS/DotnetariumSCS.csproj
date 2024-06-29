@@ -12,7 +12,7 @@
 
   <PropertyGroup>
     <PackageId>Dotnetarium.Analyzers.SCS</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Authors>Dmitry Balikhin</Authors>
     <PackageProjectUrl>https://github.com/dotnetarium/DotnetariumSCS</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
