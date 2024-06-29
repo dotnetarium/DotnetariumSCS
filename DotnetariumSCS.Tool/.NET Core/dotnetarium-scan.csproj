@@ -10,7 +10,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotnetarium-scs</PackageId>
-    <Version>$(AssemblyVersionNumber)</Version>
+    <Version>1.0.0</Version>
     <Authors>Dmitry Balikhin</Authors>
     <Product>DotnetariumSCS</Product>
     <Company>https://github.com/dotnetarium</Company>
@@ -64,7 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\DotnetariumSCS.Vsix\icon.png">
+    <None Include="..\..\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
