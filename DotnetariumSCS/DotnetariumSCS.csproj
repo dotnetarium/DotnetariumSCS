@@ -6,6 +6,29 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Dotnetarium.Analyzers.SCS</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Dmitry Balikhin</Authors>
+    <PackageProjectUrl>https://github.com/dotnetarium/DotnetariumSCS</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/dotnetarium/DotnetariumSCS</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>Security static code analyzer for .NET based on Security Code Scan (Jaroslav Lobačevski)</Description>
+    <PackageReleaseNotes>Check details here: https://github.com/dotnetarium/DotnetariumSCS/releases</PackageReleaseNotes>
+    <Copyright>© Dotnetarium</Copyright>
+    <PackageTags>DotnetariumSCS Dotnetarium SCS SecurityCodeScan Security.Code.Scan Security Code Scan StaticAnalysis Vulnerability Analyzer .NET Roslyn OWASP Injection XSS CSRF XXE SQLi</PackageTags>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance> 
+    <Readme>README.md</Readme>
+
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -51,22 +74,9 @@
 
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\"/>
-    <None Update="Diagnostic.nuspec">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="tools\install.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="tools\uninstall.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="..\icon.png" Pack="true" PackagePath="\"/>
+    <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
   </ItemGroup>
-
-  <Target Name="CustomAfterBuild" AfterTargets="Build">
-    <GetAssemblyIdentity AssemblyFiles="$(OutDir)\$(AssemblyName).dll">
-      <Output TaskParameter="Assemblies" ItemName="AnalyzerAssemblyInfo" />
-    </GetAssemblyIdentity>
-  </Target>
 
   <Import Project="..\Roslyn\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
 
@@ -80,4 +90,10 @@
     <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.2" />
   </ItemGroup>
 
+  <Target Name="_AddAnalyzersToOutput">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(OutputPath)\DotnetariumSCS.dll" PackagePath="analyzers/dotnet" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\YamlDotNet.dll" PackagePath="analyzers/dotnet" />
+    </ItemGroup>
+  </Target>
 </Project>
