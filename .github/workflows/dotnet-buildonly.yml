@@ -37,7 +37,7 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
       with:
-        vs-version: '[17.0,17.4)'
+        vs-version: '[17.0,17.12)'
       
 
     - name: Setup VSTest
