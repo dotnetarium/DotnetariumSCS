@@ -12,13 +12,13 @@
 
   <PropertyGroup>
     <PackageId>Dotnetarium.Analyzers.SCS</PackageId>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Authors>Dmitry Balikhin</Authors>
     <PackageProjectUrl>https://github.com/dotnetarium/DotnetariumSCS</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/dotnetarium/DotnetariumSCS</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>Security static code analyzer for .NET based on Security Code Scan (Jaroslav Lobačevski)</Description>
+    <Description>Security static code analyzer for .NET based on Security Code Scan</Description>
     <PackageReleaseNotes>Check details here: https://github.com/dotnetarium/DotnetariumSCS/releases</PackageReleaseNotes>
     <Copyright>© Dotnetarium</Copyright>
     <PackageTags>DotnetariumSCS Dotnetarium SCS SecurityCodeScan Security.Code.Scan Security Code Scan StaticAnalysis Vulnerability Analyzer .NET Roslyn OWASP Injection XSS CSRF XXE SQLi</PackageTags>
@@ -55,11 +55,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="4.9.2" />
-    <PackageReference Update="Microsoft.CodeAnalysis.Common" Version="4.9.2" />
-    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.2" />
-    <PackageReference Include="YamlDotNet" Version="15.1.4" />
+    <!-- 3.11.0 version is required to support VS 2019 (16.11) and all versions of VS 2022
+    https://learn.microsoft.com/en-us/visualstudio/extensibility/roslyn-version-support?view=vs-2022
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="3.11.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Common" Version="3.11.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.11.0" />
+    <PackageReference Include="YamlDotNet" Version="15.3.0" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
 
@@ -69,8 +72,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
-    <None Include="..\icon.png" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\icon.png" Pack="true" PackagePath="\" />
     <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
   </ItemGroup>
 
@@ -82,8 +85,8 @@
 
   <ItemGroup>
     <PackageReference Update="Microsoft.CodeAnalysis" Version="3.11.0" />
-    <PackageReference Update="Microsoft.CodeAnalysis.Common" Version="4.9.2" />
-    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.2" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Common" Version="3.11.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.11.0" />
   </ItemGroup>
 
   <Target Name="_AddAnalyzersToOutput">
