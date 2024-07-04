@@ -28,17 +28,38 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.1xx
-
-    - name: Build with dotnet
-      run: dotnet build --configuration Release .\DotnetariumSCS\DotnetariumSCS.csproj
+          6.0.x
+          8.0.x
       
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2      
+
+    - name: Setup VSTest
+      uses: darenm/Setup-VSTest@v1.2
+
+    - name: Restore
+      run: nuget restore $env:Solution_Name
+      env:
+        Configuration: ${{ inputs.configuration }}
+
+    - name: Build
+      run: msbuild -m $env:Solution_Name /p:Configuration=Release
+
+    - name: Run Tests
+      run: |
+        VSTest.console.exe ./DotnetariumSCS.Test/bin/Release/DotnetariumSCS.Test.dll
+
+    - name: Zip dotnetarium-scan 4.x
+      shell: bash
+      run: 7z a dotnetarium-scan4x.zip "./DotnetariumSCS.Tool/.NET 4.x/bin/Release/net48/*"
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         retention-days: 7
         name: packages
         path: |
+          dotnetarium-scan4x.zip
           ./DotnetariumSCS/bin/Release/**/*.nupkg
-      
-  
+          ./DotnetariumSCS.Vsix/bin/Release/*.vsix
+          ./DotnetariumSCS.Tool/.NET Core/bin/Release/*.nupkg
