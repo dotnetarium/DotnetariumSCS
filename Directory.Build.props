@@ -1,17 +1,7 @@
 <Project>
   <PropertyGroup>
-    <MicrosoftCodeAnalysisVersion>3.11.0</MicrosoftCodeAnalysisVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <InformationalVersion>1.0.1</InformationalVersion>
   </PropertyGroup>
-  <Choose>
-    <When Condition=" '$(TAG_VERSION)' != '' ">
-      <PropertyGroup>
-        <AssemblyVersionNumber>$(TAG_VERSION)</AssemblyVersionNumber>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <AssemblyVersionNumber>1.0.0.0</AssemblyVersionNumber>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
 </Project>

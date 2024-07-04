@@ -28,6 +28,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetarium-scan", "DotnetariumSCS.Tool\.NET 4.x\dotnetarium-scan.csproj", "{D697AA62-A7E1-43F5-ADD3-D691D5C05859}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CB773D3E-CEC4-45EE-A76C-7CE7C44D88D7}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,8 +72,8 @@ Global
 		{D697AA62-A7E1-43F5-ADD3-D691D5C05859} = {4AEA00DB-C7E7-4047-A3B8-9D2B5119B20D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45
 		SolutionGuid = {4890F503-884C-48F5-982B-41C1DB7472F5}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Roslyn\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
