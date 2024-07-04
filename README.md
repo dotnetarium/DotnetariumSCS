@@ -30,7 +30,7 @@ dotnet tool install --global dotnetarium-scs
 
 #### As a NuGet Package
 
-To install DotnetariumSCS as a NuGet package, add the following package to your project `DotnetariumSCS`
+To install DotnetariumSCS as a NuGet package, add the following package to your project `Dotnetarium.Analyzers.SCS`
 
 #### As a Visual Studio extension
 
