@@ -5,6 +5,7 @@
     <TargetFramework>net48</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNet.Glob" Version="3.1.2" />
+    <PackageReference Include="Dotnetarium.Analyzers.SCS" Version="1.0.3" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.2" />
@@ -32,10 +34,6 @@
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="8.0.0" />
     <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.9.2" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\DotnetariumSCS\DotnetariumSCS.csproj" />
   </ItemGroup>
 
 </Project>

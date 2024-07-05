@@ -501,7 +501,7 @@ namespace Dotnetarium.Tool
                     if (stream != null)
                     {
                         var v = new Version(versionString);
-                        logger = new SarifV2ErrorLogger(stream, "Security Code Scan", versionString, new Version($"{v.Major}.{v.Minor}.{v.Build}.0"), CultureInfo.CurrentCulture);
+                        logger = new SarifV2ErrorLogger(stream, "DotnetariumSCS", versionString, new Version($"{v.Major}.{v.Minor}.{v.Build}.0"), CultureInfo.CurrentCulture);
                     }
 
                     var descriptors = new ConcurrentDictionary<string, DiagnosticDescriptor>();

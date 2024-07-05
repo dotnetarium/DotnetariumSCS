@@ -10,7 +10,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>dotnetarium-scs</PackageId>    
-    <Version>1.0.1</Version>    
+    <Version>1.0.3</Version>    
     <Authors>Dmitry Balikhin</Authors>
     <Product>DotnetariumSCS</Product>
     <Company>https://github.com/dotnetarium</Company>
@@ -23,18 +23,19 @@
     <PackageProjectUrl>https://github.com/dotnetarium/DotnetariumSCS</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
+    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <InformationalVersion>1.0.1</InformationalVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <InformationalVersion>1.0.3</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <InformationalVersion>1.0.1</InformationalVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <InformationalVersion>1.0.3</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -53,6 +54,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNet.Glob" Version="3.1.3" />
+    <PackageReference Include="Dotnetarium.Analyzers.SCS" Version="1.0.3" IncludeAssets="all" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.7.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.2" />
@@ -65,10 +67,6 @@
     </PackageReference>
     <PackageReference Include="Mono.Options" Version="6.12.0.148" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\DotnetariumSCS\DotnetariumSCS.csproj" />
   </ItemGroup>
 
   <ItemGroup>
