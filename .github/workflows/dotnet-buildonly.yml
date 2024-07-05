@@ -34,9 +34,6 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2      
 
-    - name: Setup VSTest
-      uses: darenm/Setup-VSTest@v1.2
-
     - name: Restore
       run: nuget restore $env:Solution_Name
       env:
@@ -44,10 +41,6 @@ jobs:
 
     - name: Build
       run: msbuild -m $env:Solution_Name /p:Configuration=Release
-
-    - name: Run Tests
-      run: |
-        VSTest.console.exe ./DotnetariumSCS.Test/bin/Release/DotnetariumSCS.Test.dll
 
     - name: Zip dotnetarium-scan 4.x
       shell: bash
@@ -60,6 +53,4 @@ jobs:
         name: packages
         path: |
           dotnetarium-scan4x.zip
-          ./DotnetariumSCS/bin/Release/**/*.nupkg
-          ./DotnetariumSCS.Vsix/bin/Release/*.vsix
           ./DotnetariumSCS.Tool/.NET Core/bin/Release/*.nupkg

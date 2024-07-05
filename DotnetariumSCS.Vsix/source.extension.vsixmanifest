@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="1ab1e605-c9e9-465b-b10f-17466d054a57" Version="1.0.0" Language="en-US" Publisher="DmitryBalikhin"/>
+        <Identity Id="1ab1e605-c9e9-465b-b10f-17466d054a57" Version="1.0.3" Language="en-US" Publisher="DmitryBalikhin"/>
         <DisplayName>Dontetarium SCS</DisplayName>
         <Description xml:space="preserve">Security static code analyzer for .NET based on Security Code Scan</Description>
         <MoreInfo>https://security-code-scan.github.io</MoreInfo>
@@ -10,7 +10,7 @@
         <ReleaseNotes>https://security-code-scan.github.io/#ReleaseNotes</ReleaseNotes>
         <Icon>icon.png</Icon>
         <PreviewImage>preview.png</PreviewImage>
-        <Tags>Dotnetarium;Security.Code.Scan;Security Code Scan;Static Code Analysis;Security;Vulnerability;Analyzer;Analyzers;.NET;Roslyn;OWASP;Injection;XSS;CSRF;XXE;SQLi</Tags>
+        <Tags>Dotnetarium;DotnetariumSCS;Dotnetarium SCS;Security.Code.Scan;Security Code Scan;Static Code Analysis;Security;Vulnerability;Analyzer;Analyzers;.NET;Roslyn;OWASP;Injection;XSS;CSRF;XXE;SQLi</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Pro">
