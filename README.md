@@ -2,6 +2,8 @@
 DotnetariumSCS is a console application designed to provide comprehensive static code analysis for .NET projects and solutions.
 A standalone fork of [Security Code Scan](https://github.com/security-code-scan/security-code-scan)
 
+This repo contains only Tools (console apps for .NET Fx and .NET global tool). [Nuget package repo](https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS) with analyzers.
+
 Synked fork (with updated packages and the latest Roslyn) is available [here](https://github.com/dbalikhin/security-code-scan)
 
 ## Getting Started
