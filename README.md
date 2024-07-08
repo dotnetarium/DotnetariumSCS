@@ -45,6 +45,9 @@ To install DotnetariumSCS as a .NET global tool, run:
 dotnet tool install --global dotnetarium-scs
 ```
 
+#### As a .NET Framework tool
+Check [releases page](https://github.com/dotnetarium/DotnetariumSCS/releases) to download an artifact for .NET 4.x
+
 #### As a NuGet Package
 
 To install DotnetariumSCS as a NuGet package, add the following package to your project `Dotnetarium.Analyzers.SCS`
