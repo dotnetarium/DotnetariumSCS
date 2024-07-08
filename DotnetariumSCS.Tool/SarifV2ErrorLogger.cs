@@ -164,11 +164,32 @@ namespace Microsoft.CodeAnalysis
             {
                 _writer.WriteArrayStart("relatedLocations");
 
-                foreach (var additionalLocation in additionalLocations)
+                for (int i = 0; i < additionalLocations.Count; i++)
                 {
+                    Location? additionalLocation = additionalLocations[i];
                     if (HasPath(additionalLocation))
                     {
                         _writer.WriteObjectStart(); // annotatedCodeLocation
+                        _writer.Write("id", i);
+
+                        int sinkId = additionalLocations.Count - 1;
+                        if (i == 0 || i == sinkId) // source location
+                        {
+                            _writer.WriteObjectStart("message");
+                            if (i == 0) // source
+                            {
+                                _writer.Write("text", "Source: Origin of tainted data");
+                            }
+                            else // sink
+                            {
+                                _writer.Write("text", "Sink: Destination where tainted data can be expoited");
+                            }
+                            
+                            _writer.WriteObjectEnd();
+                        }
+
+                        
+
                         _writer.WriteKey("physicalLocation");
 
                         WritePhysicalLocation(additionalLocation);
@@ -220,7 +241,7 @@ namespace Microsoft.CodeAnalysis
             _writer.Write("version", _toolFileVersion);
             _writer.Write("dottedQuadFileVersion", _toolAssemblyVersion.ToString());
             _writer.Write("semanticVersion", _toolAssemblyVersion.ToString(fieldCount: 3));
-            _writer.Write("language", _culture.Name);
+            _writer.Write("language", "en");
 
             WriteRules();
 
