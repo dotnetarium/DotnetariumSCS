@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+DotnetariumSCS.Tool/.NET Core/Properties/launchSettings.json
