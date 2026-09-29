@@ -2,7 +2,7 @@
 DotnetariumSCS is a console application designed to provide comprehensive static code analysis for .NET projects and solutions.
 A standalone fork of [Security Code Scan](https://github.com/security-code-scan/security-code-scan)
 
-This repo contains only Tools (console apps for .NET Fx and .NET global tool). [Nuget package repo](https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS) with analyzers.
+The supported application is a .NET global tool. The [analyzer NuGet package](https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS) is maintained in a separate repository.
 
 Synked fork (with updated packages and the latest Roslyn) is available [here](https://github.com/dbalikhin/security-code-scan)
 
@@ -31,7 +31,6 @@ TaintFlowVisualizationEnabled: false
 ### Supported .NET versions
 - .NET 8.0
 - .NET 10.0
-- .NET Framework 4.8
 
 End-of-life .NET versions will be dropped; new stable .NET versions will be added 
 
@@ -45,18 +44,9 @@ To install DotnetariumSCS as a .NET global tool, run:
 dotnet tool install --global dotnetarium-scs
 ```
 
-#### As a .NET Framework tool
-Check [releases page](https://github.com/dotnetarium/DotnetariumSCS/releases) to download an artifact for .NET 4.x
-
 #### As a NuGet Package
 
 To install DotnetariumSCS as a NuGet package, add the following package to your project `Dotnetarium.Analyzers.SCS`
-
-#### As a Visual Studio extension
-
-Not supported yet. Continue to use [Security Code Scan version](https://marketplace.visualstudio.com/items?itemName=JaroslavLobacevski.SecurityCodeScanVS2019).
-At this point, no changes will affect the Visual Studio extension experience.
-
 
 ## Usage
 
