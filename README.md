@@ -29,9 +29,9 @@ TaintFlowVisualizationEnabled: false
 - .NET SDK to install the app as a [global tool](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install)
 
 ### Supported .NET versions
-- .NET 6.0
 - .NET 8.0
-- .NET 4.7.2 - 4.8
+- .NET 10.0
+- .NET Framework 4.8
 
 End-of-life .NET versions will be dropped; new stable .NET versions will be added 
 
