@@ -7,7 +7,7 @@ The supported application is a .NET global tool. The [analyzer NuGet package](ht
 Synked fork (with updated packages and the latest Roslyn) is available [here](https://github.com/dbalikhin/security-code-scan)
 
 ## New
-Version 1.4.0 pairs with analyzer package 1.4.0 to export source-to-sink SARIF
+Version 1.3.0 pairs with analyzer package 1.3.0 to export source-to-sink SARIF
 code flows. Source paths are relative to the checkout by default.
 
 Version 1.2.0 supports .NET 10 as a global tool and removes the unsupported .NET 6 target.

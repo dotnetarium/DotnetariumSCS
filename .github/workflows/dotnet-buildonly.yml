@@ -30,20 +30,20 @@ jobs:
           8.0.x
           10.0.x
 
-    - name: Resolve analyzer 1.4.0 for pull request
+    - name: Resolve analyzer 1.3.0 for pull request
       if: github.event_name == 'pull_request'
       shell: pwsh
       run: |
-        # Build the reviewed analyzer commit until its 1.4.0 package reaches NuGet.
+        # Build the reviewed analyzer commit until its 1.3.0 package reaches NuGet.
         $feed = Join-Path $env:RUNNER_TEMP 'analyzer-feed'
         New-Item -ItemType Directory -Path $feed -Force | Out-Null
-        $packageUrl = 'https://api.nuget.org/v3-flatcontainer/dotnetarium.analyzers.scs/1.4.0/dotnetarium.analyzers.scs.1.4.0.nupkg'
+        $packageUrl = 'https://api.nuget.org/v3-flatcontainer/dotnetarium.analyzers.scs/1.3.0/dotnetarium.analyzers.scs.1.3.0.nupkg'
         try {
           Invoke-WebRequest -Uri $packageUrl -Method Head -ErrorAction Stop | Out-Null
         } catch {
           $source = Join-Path $env:RUNNER_TEMP 'analyzer-source'
           git clone https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS.git $source
-          git -C $source checkout fba3afaff309baee0467b1104f79ed7fd4d54a52
+          git -C $source checkout 619bf6c6b9cf3ddc64cdb9734fc8eaa085f3bd9c
           $project = Join-Path $source 'DotnetariumSCS/DotnetariumSCS.csproj'
           dotnet build $project -c Release
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
