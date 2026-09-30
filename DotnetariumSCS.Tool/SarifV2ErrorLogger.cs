@@ -81,8 +81,11 @@ namespace Microsoft.CodeAnalysis
         private readonly string _toolName;
         private readonly string _toolFileVersion;
         private readonly Version _toolAssemblyVersion;
+        private readonly string _sourceRootWithSeparator;
+        private readonly bool _absolutePaths;
 
-        public SarifV2ErrorLogger(Stream stream, string toolName, string toolFileVersion, Version toolAssemblyVersion, CultureInfo culture)
+        public SarifV2ErrorLogger(Stream stream, string toolName, string toolFileVersion, Version toolAssemblyVersion, CultureInfo culture,
+            string sourceRoot, bool absolutePaths)
             : base(stream, culture)
         {
             _descriptors = new DiagnosticDescriptorSet();
@@ -90,12 +93,23 @@ namespace Microsoft.CodeAnalysis
             _toolName = toolName;
             _toolFileVersion = toolFileVersion;
             _toolAssemblyVersion = toolAssemblyVersion;
+            _sourceRootWithSeparator = Path.GetFullPath(sourceRoot).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            _absolutePaths = absolutePaths;
 
             _writer.WriteObjectStart(); // root
             _writer.Write("$schema", "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json");
             _writer.Write("version", "2.1.0");
             _writer.WriteArrayStart("runs");
             _writer.WriteObjectStart(); // run
+
+            if (!_absolutePaths)
+            {
+                _writer.WriteObjectStart("originalUriBaseIds");
+                _writer.WriteObjectStart("%SRCROOT%");
+                _writer.Write("uri", GetUri(_sourceRootWithSeparator));
+                _writer.WriteObjectEnd();
+                _writer.WriteObjectEnd();
+            }
 
             _writer.WriteArrayStart("results");
         }
@@ -135,6 +149,10 @@ namespace Microsoft.CodeAnalysis
             }
 
             WriteLocations(diagnostic.Location, diagnostic.AdditionalLocations);
+            if (diagnostic.Properties.TryGetValue("dotnetarium.flow", out string? flowMarker) && flowMarker == "true")
+            {
+                WriteCodeFlows(diagnostic.Location, diagnostic.AdditionalLocations);
+            }
 
             WriteResultProperties(diagnostic);
 
@@ -202,6 +220,39 @@ namespace Microsoft.CodeAnalysis
             }
         }
 
+        private void WriteCodeFlows(Location sink, IReadOnlyList<Location> path)
+        {
+            // A complete engine witness starts at the source and ends at the
+            // diagnostic sink. Keep related locations if a malformed or partial
+            // witness is supplied.
+            if (path == null || path.Count < 2 || !HasPath(sink) ||
+                !path[path.Count - 1].Equals(sink) || path.Any(location => !HasPath(location)))
+            {
+                return;
+            }
+
+            _writer.WriteArrayStart("codeFlows");
+            _writer.WriteObjectStart(); // codeFlow
+            _writer.WriteArrayStart("threadFlows");
+            _writer.WriteObjectStart(); // threadFlow
+            _writer.WriteArrayStart("locations");
+            foreach (Location step in path)
+            {
+                _writer.WriteObjectStart(); // threadFlowLocation
+                _writer.WriteObjectStart("location");
+                _writer.WriteKey(PrimaryLocationPropertyName);
+                WritePhysicalLocation(step);
+                _writer.WriteObjectEnd(); // location
+                _writer.WriteObjectEnd(); // threadFlowLocation
+            }
+
+            _writer.WriteArrayEnd(); // locations
+            _writer.WriteObjectEnd(); // threadFlow
+            _writer.WriteArrayEnd(); // threadFlows
+            _writer.WriteObjectEnd(); // codeFlow
+            _writer.WriteArrayEnd(); // codeFlows
+        }
+
         protected override void WritePhysicalLocation(Location diagnosticLocation)
         {
             Debug.Assert(HasPath(diagnosticLocation));
@@ -211,7 +262,34 @@ namespace Microsoft.CodeAnalysis
             _writer.WriteObjectStart(); // physicalLocation
 
             _writer.WriteObjectStart("artifactLocation");
-            _writer.Write("uri", GetUri(span.Path));
+            var path = span.Path;
+            if (!_absolutePaths)
+            {
+                string? fullPath;
+                try
+                {
+                    fullPath = Path.IsPathRooted(path) ? Path.GetFullPath(path) : null;
+                }
+                catch (ArgumentException)
+                {
+                    fullPath = null;
+                }
+
+                var comparison = Path.DirectorySeparatorChar == '\\' ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+                if (fullPath != null && fullPath.StartsWith(_sourceRootWithSeparator, comparison))
+                {
+                    _writer.Write("uri", GetUri(fullPath.Substring(_sourceRootWithSeparator.Length)));
+                    _writer.Write("uriBaseId", "%SRCROOT%");
+                }
+                else
+                {
+                    _writer.Write("uri", GetUri(fullPath ?? path));
+                }
+            }
+            else
+            {
+                _writer.Write("uri", GetUri(path));
+            }
             _writer.WriteObjectEnd(); // artifactLocation
 
             WriteRegion(span);

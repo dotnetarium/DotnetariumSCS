@@ -156,6 +156,7 @@ namespace Dotnetarium.Tool
     {
         public string solutionPath = null;
         public string sarifFile = null;
+        public bool sarifAbsolutePaths = false;
         public string config = null;
         public int? threads = null;
         public bool shouldShowHelp = false;
@@ -190,6 +191,7 @@ namespace Dotnetarium.Tool
                     { "p|excl-proj=",   "(Optional) semicolon delimited list of glob project patterns to exclude", r => { excludeProjectsList = r; } },
                     { "incl-proj=",     "(Optional) semicolon delimited list of glob project patterns to include", r => { includeProjectsList = r; } },
                     { "x|export=",      "(Optional) SARIF file path", r => { sarifFile = r; } },
+                    { "sarif-absolute-paths", "Write absolute SARIF source paths instead of repository-relative paths", r => { sarifAbsolutePaths = r != null; } },
                     { "c|config=",      "(Optional) path to additional configuration file", r => { config = r; } },
                     { "cwe",            "(Optional) show CWE IDs", r => { cwe = r != null; } },
                     { "t|threads=",     "(Optional) run analysis in parallel (experimental)", (int r) => { threads = r; } },
@@ -501,7 +503,8 @@ namespace Dotnetarium.Tool
                     if (stream != null)
                     {
                         var v = new Version(versionString);
-                        logger = new SarifV2ErrorLogger(stream, "DotnetariumSCS", versionString, new Version($"{v.Major}.{v.Minor}.{v.Build}.0"), CultureInfo.CurrentCulture);
+                        logger = new SarifV2ErrorLogger(stream, "DotnetariumSCS", versionString, new Version($"{v.Major}.{v.Minor}.{v.Build}.0"), CultureInfo.CurrentCulture,
+                            GetSarifSourceRoot(parsedOptions.solutionPath), parsedOptions.sarifAbsolutePaths);
                     }
 
                     var descriptors = new ConcurrentDictionary<string, DiagnosticDescriptor>();
@@ -534,6 +537,21 @@ namespace Dotnetarium.Tool
                 if (stream != null)
                     stream.Close();
             }
+        }
+
+        private static string GetSarifSourceRoot(string solutionPath)
+        {
+            var directory = new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(solutionPath)));
+            for (var current = directory; current != null; current = current.Parent)
+            {
+                var gitPath = Path.Combine(current.FullName, ".git");
+                if (Directory.Exists(gitPath) || File.Exists(gitPath))
+                {
+                    return current.FullName;
+                }
+            }
+
+            return directory.FullName;
         }
 
         private static void LoadAnalyzers(ParsedOptions parsedOptions, List<DiagnosticAnalyzer> analyzers)

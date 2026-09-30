@@ -1,5 +1,7 @@
 ### Step1
 Run the scan with `-x` flag to export result to the SARIF format. Use `.sarif` file extension.
+Source paths are relative to the checkout root by default. Use
+`--sarif-absolute-paths` if a viewer requires absolute file URIs.
 
 ### Step 2
 Install the following Visual Studio extension: `Microsoft SARIF Viewer 2022`. Don't forget to restart Visual Studio to actually install the extension.
@@ -16,5 +18,10 @@ Work with imported results in the error window as usual. The severity of Dotneta
 Double click on any issue with `SCS` prefix. It should open the SARIF Explorer window with additional information about the issue.
 
 Use `Locations` tab to view related locations. Related locations will show data flow analysis visualization. It should help to triage the issue quicker.
+
+When the analyzer supplies a complete source-to-sink path, the export also
+includes an ordered SARIF `codeFlows` path. `relatedLocations` remains in the
+file for existing viewers. Older analyzer packages that supply only a list of
+related operations continue to export `relatedLocations` without a code flow.
 
 ![Taint Visualization](images/taint1.png)
