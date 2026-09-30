@@ -44,7 +44,10 @@ jobs:
           $source = Join-Path $env:RUNNER_TEMP 'analyzer-source'
           git clone https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS.git $source
           git -C $source checkout fba3afaff309baee0467b1104f79ed7fd4d54a52
-          dotnet pack (Join-Path $source 'DotnetariumSCS/DotnetariumSCS.csproj') -c Release -o $feed
+          $project = Join-Path $source 'DotnetariumSCS/DotnetariumSCS.csproj'
+          dotnet build $project -c Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet pack $project -c Release --no-build -o $feed
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         }
         $config = Join-Path $env:RUNNER_TEMP 'NuGet.Config'
