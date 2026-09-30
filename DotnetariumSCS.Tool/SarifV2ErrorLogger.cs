@@ -135,6 +135,10 @@ namespace Microsoft.CodeAnalysis
             }
 
             WriteLocations(diagnostic.Location, diagnostic.AdditionalLocations);
+            if (diagnostic.Properties.TryGetValue("dotnetarium.flow", out string? flowMarker) && flowMarker == "true")
+            {
+                WriteCodeFlows(diagnostic.Location, diagnostic.AdditionalLocations);
+            }
 
             WriteResultProperties(diagnostic);
 
@@ -200,6 +204,39 @@ namespace Microsoft.CodeAnalysis
 
                 _writer.WriteArrayEnd(); // relatedLocations
             }
+        }
+
+        private void WriteCodeFlows(Location sink, IReadOnlyList<Location> path)
+        {
+            // A complete engine witness starts at the source and ends at the
+            // diagnostic sink. Keep related locations if a malformed or partial
+            // witness is supplied.
+            if (path == null || path.Count < 2 || !HasPath(sink) ||
+                !path[path.Count - 1].Equals(sink) || path.Any(location => !HasPath(location)))
+            {
+                return;
+            }
+
+            _writer.WriteArrayStart("codeFlows");
+            _writer.WriteObjectStart(); // codeFlow
+            _writer.WriteArrayStart("threadFlows");
+            _writer.WriteObjectStart(); // threadFlow
+            _writer.WriteArrayStart("locations");
+            foreach (Location step in path)
+            {
+                _writer.WriteObjectStart(); // threadFlowLocation
+                _writer.WriteObjectStart("location");
+                _writer.WriteKey(PrimaryLocationPropertyName);
+                WritePhysicalLocation(step);
+                _writer.WriteObjectEnd(); // location
+                _writer.WriteObjectEnd(); // threadFlowLocation
+            }
+
+            _writer.WriteArrayEnd(); // locations
+            _writer.WriteObjectEnd(); // threadFlow
+            _writer.WriteArrayEnd(); // threadFlows
+            _writer.WriteObjectEnd(); // codeFlow
+            _writer.WriteArrayEnd(); // codeFlows
         }
 
         protected override void WritePhysicalLocation(Location diagnosticLocation)

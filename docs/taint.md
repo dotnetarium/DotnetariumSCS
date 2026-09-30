@@ -17,4 +17,9 @@ Double click on any issue with `SCS` prefix. It should open the SARIF Explorer w
 
 Use `Locations` tab to view related locations. Related locations will show data flow analysis visualization. It should help to triage the issue quicker.
 
+When the analyzer supplies a complete source-to-sink path, the export also
+includes an ordered SARIF `codeFlows` path. `relatedLocations` remains in the
+file for existing viewers. Older analyzer packages that supply only a list of
+related operations continue to export `relatedLocations` without a code flow.
+
 ![Taint Visualization](images/taint1.png)
