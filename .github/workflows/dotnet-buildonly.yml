@@ -29,9 +29,41 @@ jobs:
         dotnet-version: |
           8.0.x
           10.0.x
+
+    - name: Resolve analyzer 1.4.0 for pull request
+      if: github.event_name == 'pull_request'
+      shell: pwsh
+      run: |
+        # Build the reviewed analyzer commit until its 1.4.0 package reaches NuGet.
+        $feed = Join-Path $env:RUNNER_TEMP 'analyzer-feed'
+        New-Item -ItemType Directory -Path $feed -Force | Out-Null
+        $packageUrl = 'https://api.nuget.org/v3-flatcontainer/dotnetarium.analyzers.scs/1.4.0/dotnetarium.analyzers.scs.1.4.0.nupkg'
+        try {
+          Invoke-WebRequest -Uri $packageUrl -Method Head -ErrorAction Stop | Out-Null
+        } catch {
+          $source = Join-Path $env:RUNNER_TEMP 'analyzer-source'
+          git clone https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS.git $source
+          git -C $source checkout fba3afaff309baee0467b1104f79ed7fd4d54a52
+          dotnet pack (Join-Path $source 'DotnetariumSCS/DotnetariumSCS.csproj') -c Release -o $feed
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        }
+        $config = Join-Path $env:RUNNER_TEMP 'NuGet.Config'
+        @"
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration><packageSources><clear /><add key="analyzer-preview" value="$feed" /><add key="nuget.org" value="https://api.nuget.org/v3/index.json" /></packageSources></configuration>
+        "@ | Set-Content -Path $config
+        "ANALYZER_NUGET_CONFIG=$config" >> $env:GITHUB_ENV
       
     - name: Build and package global tool
-      run: dotnet build "DotnetariumSCS.Tool/.NET Core/dotnetarium-scan.csproj" --configuration Release
+      shell: pwsh
+      run: |
+        if ($env:ANALYZER_NUGET_CONFIG) {
+          dotnet restore "DotnetariumSCS.Tool/.NET Core/dotnetarium-scan.csproj" --configfile $env:ANALYZER_NUGET_CONFIG
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet build "DotnetariumSCS.Tool/.NET Core/dotnetarium-scan.csproj" --configuration Release --no-restore
+        } else {
+          dotnet build "DotnetariumSCS.Tool/.NET Core/dotnetarium-scan.csproj" --configuration Release
+        }
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
