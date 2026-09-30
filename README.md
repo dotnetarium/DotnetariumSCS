@@ -146,6 +146,10 @@ Export Results to SARIF File
 dotnetarium-scs "path/to/solution.sln" -x "results.sarif"
 ```
 
+SARIF source paths are relative to the Git checkout root by default (or the
+solution/project directory outside Git). Use `--sarif-absolute-paths` to keep
+absolute file URIs.
+
 #### Compatibility
 
 DotnetariumSCS is backward compatible with the Security Code Scan project. The Security Code Scan GitHub repository has more details.

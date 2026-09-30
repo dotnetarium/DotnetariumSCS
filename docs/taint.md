@@ -1,5 +1,7 @@
 ### Step1
 Run the scan with `-x` flag to export result to the SARIF format. Use `.sarif` file extension.
+Source paths are relative to the checkout root by default. Use
+`--sarif-absolute-paths` if a viewer requires absolute file URIs.
 
 ### Step 2
 Install the following Visual Studio extension: `Microsoft SARIF Viewer 2022`. Don't forget to restart Visual Studio to actually install the extension.
