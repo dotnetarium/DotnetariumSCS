@@ -273,8 +273,6 @@ namespace Dotnetarium.Tool
                 return 1;
             }
 
-            var returnCode = 0;
-
             // Attempt to set the version of MSBuild.
             if (parsedOptions.sdkPath != null)
             {
@@ -325,6 +323,14 @@ namespace Dotnetarium.Tool
                 }
             }
 
+            // Keep MSBuild types out of this method so Locator registers before the
+            // runtime loads Microsoft.Build assemblies.
+            return await RunAnalysisAsync(parsedOptions, versionString, startTime).ConfigureAwait(false);
+        }
+
+        private static async Task<int> RunAnalysisAsync(ParsedOptions parsedOptions, string versionString, DateTime startTime)
+        {
+            var returnCode = 0;
             var properties = new Dictionary<string, string>() { { "AdditionalFileItemNames", "$(AdditionalFileItemNames);Content" } };
 
             var solutionDirectory = Path.GetDirectoryName(parsedOptions.solutionPath) + Path.DirectorySeparatorChar;
