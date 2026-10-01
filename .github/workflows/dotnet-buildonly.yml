@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -70,6 +70,8 @@ jobs:
 
     - name: Setup MSBuild for .NET Framework
       uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '[17.0,18.0)'
 
     - name: Build .NET Framework 4.8 executable
       shell: pwsh
