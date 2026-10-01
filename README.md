@@ -1,8 +1,16 @@
-# DotnetariumSCS
+# DotnetariumSCS 1.x
+
+This repository preserves the 1.x global tool and .NET Framework release
+artifacts. The current analyzer and global tool are developed together in
+[dotnetarium/dotnetarium](https://github.com/dotnetarium/dotnetarium). Dotnetarium
+2.x uses the `Dotnetarium.Analyzers` NuGet package, the `dotnetarium` global
+tool, and new `DNA` rule IDs. See the [2.x migration notes](https://github.com/dotnetarium/dotnetarium#moving-from-1x)
+before upgrading.
+
 DotnetariumSCS is a console application designed to provide comprehensive static code analysis for .NET projects and solutions.
 A standalone fork of [Security Code Scan](https://github.com/security-code-scan/security-code-scan)
 
-The supported application is a .NET global tool. The [analyzer NuGet package](https://github.com/dotnetarium/Dotnetarium.Analyzers.SCS) is maintained in a separate repository.
+The 1.x application is a .NET global tool. Its [legacy analyzer package](https://www.nuget.org/packages/Dotnetarium.Analyzers.SCS) is available on NuGet.org.
 
 Synked fork (with updated packages and the latest Roslyn) is available [here](https://github.com/dbalikhin/security-code-scan)
 
