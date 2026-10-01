@@ -92,6 +92,7 @@ jobs:
         $zip = Join-Path $env:RUNNER_TEMP 'dotnetarium-scan4x.zip'
         [IO.Compression.ZipFile]::CreateFromDirectory($publish, $zip)
         "FX_ZIP=$zip" >> $env:GITHUB_ENV
+        exit 0
 
     - name: Upload .NET Framework ZIP
       uses: actions/upload-artifact@v4
