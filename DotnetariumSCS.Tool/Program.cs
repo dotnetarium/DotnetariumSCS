@@ -59,6 +59,17 @@ namespace Dotnetarium.Tool
 
         protected async Task<ImmutableArray<Diagnostic>> GetDiagnostics(Project project)
         {
+            // Razor files can enter the workspace as both Content and AdditionalFiles.
+            // The Razor source generator rejects duplicate paths with the same hint name.
+            var pathComparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+            foreach (var documents in project.AdditionalDocuments
+                .Where(document => document.FilePath != null)
+                .GroupBy(document => Path.GetFullPath(document.FilePath), pathComparer))
+            {
+                foreach (var duplicate in documents.Skip(1))
+                    project = project.RemoveAdditionalDocument(duplicate.Id);
+            }
+
             var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
             var compilationWithAnalyzers = compilation.WithAnalyzers(_analyzers.ToImmutableArray(), project.AnalyzerOptions);
             return await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
@@ -325,7 +336,7 @@ namespace Dotnetarium.Tool
                 }
             }
 
-            var properties = new Dictionary<string, string>() { { "AdditionalFileItemNames", "$(AdditionalFileItemNames);Content" } };
+            var properties = new Dictionary<string, string>() { { "AdditionalFileItemNames", "Content" } };
 
             var solutionDirectory = Path.GetDirectoryName(parsedOptions.solutionPath) + Path.DirectorySeparatorChar;
 
