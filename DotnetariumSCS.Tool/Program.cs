@@ -294,7 +294,8 @@ namespace Dotnetarium.Tool
                         Environment.SetEnvironmentVariable(kvp.Key, kvp.Value);
                     }
                 }
-                ApplyDotNetSdkEnvironmentVariables(parsedOptions.sdkPath);
+                if (!File.Exists(Path.Combine(parsedOptions.sdkPath, "MSBuild.exe")))
+                    ApplyDotNetSdkEnvironmentVariables(parsedOptions.sdkPath);
                 // Find and load NuGet assemblies if msbuildPath is in a VS installation
                 string nugetPath = Path.GetFullPath(Path.Combine(parsedOptions.sdkPath, "..", "..", "..", "Common7", "IDE", "CommonExtensions", "Microsoft", "NuGet"));
                 if (Directory.Exists(nugetPath))
